@@ -20,13 +20,13 @@ namespace DeviceReg.Common.Data.DeviceRegDB {
         private void AddMediums(DeviceRegDBContext context) {
             IList<Medium> mediums = new List<Medium>() {
                 new Medium() { Name = "1- Pentanol" },
-                new Medium() { Name = "1- Pentanol", Gas = true },
+                new Medium() { Name = "1- Pentanol", IsGas = true },
                 new Medium() { Name = "Aceton" },
-                new Medium() { Name = "Aceton", Gas = true },
+                new Medium() { Name = "Aceton", IsGas = true },
                 new Medium() { Name = "Ameisensäure" },
-                new Medium() { Name = "Ameisensäure", Gas = true },
+                new Medium() { Name = "Ameisensäure", IsGas = true },
                 new Medium() { Name = "Ammoniak" },
-                new Medium() { Name = "Ammoniak", Gas = true },
+                new Medium() { Name = "Ammoniak", IsGas = true },
             };
 
             foreach(Medium medium in mediums) {

@@ -1,9 +1,13 @@
-﻿using System.Collections.Generic;
+﻿using DeviceReg.Common.Data.Models.ComplexTypes;
+using System.Collections.Generic;
 
-namespace DeviceReg.Common.Data.Models {
-    public class Medium {
-        public Medium() {
-            Gas = false;
+namespace DeviceReg.Common.Data.Models
+{
+    public class Medium
+    {
+        public Medium()
+        {
+            this.Timestamp = new Timestamp();
         }
         public int Id
         {
@@ -13,10 +17,13 @@ namespace DeviceReg.Common.Data.Models {
         {
             get; set;
         }
-        public bool Gas
+        public bool IsGas
         {
             get; set;
         }
+
+        public Timestamp Timestamp { get; set; }
+
         public virtual ICollection<Device> Devices
         {
             get; set;

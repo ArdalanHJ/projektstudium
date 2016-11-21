@@ -1,9 +1,14 @@
-﻿using System.Collections.Generic;
+﻿using DeviceReg.Common.Data.Interfaces;
+using DeviceReg.Common.Data.Models.ComplexTypes;
+using System.Collections.Generic;
 
-namespace DeviceReg.Common.Data.Models {
-    public class TypeOfDevice {
-        public TypeOfDevice() {
-
+namespace DeviceReg.Common.Data.Models
+{
+    public class TypeOfDevice : IEntity
+    {
+        public TypeOfDevice()
+        {
+            this.Timestamp = new Timestamp();
         }
         public int Id
         {
@@ -13,6 +18,9 @@ namespace DeviceReg.Common.Data.Models {
         {
             get; set;
         }
+
+        public Timestamp Timestamp { get; set; }
+
         public virtual ICollection<Device> Devices
         {
             get; set;
