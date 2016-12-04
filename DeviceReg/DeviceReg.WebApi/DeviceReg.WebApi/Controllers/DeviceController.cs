@@ -35,7 +35,7 @@ namespace DeviceReg.WebApi.Controllers
                 device.Serialnumber = deviceModel.SerialNumber;
                 device.RegularMaintenance = deviceModel.RegularMaintenance;
 
-                Service.AddDevice(device);
+                Service.AddDevice(device, deviceModel.Email);
 
                 returncode = HttpStatusCode.Accepted;
             }

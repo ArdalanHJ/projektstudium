@@ -13,6 +13,7 @@ namespace DeviceReg.WebApi.Models
 
         public Boolean RegularMaintenance { get; set; }
 
+        public string Email { get; set; }
         public bool IsValid()
         {
             return true;

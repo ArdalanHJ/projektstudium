@@ -14,24 +14,16 @@ namespace DeviceReg.Services
         {
         }
 
-        public void AddUser(User user)
+        public AspNetUsers GetUserByEmail(string email)
         {
-            UnitOfWork.Users.Add(user);
-
-            UnitOfWork.SaveChanges();
+            return UnitOfWork.Users.GetUserByEmail(email);
         }
 
-        public bool Delete(int id)
+
+        public IEnumerable<AspNetUsers> GetActiveUsers()
         {
-            var device = UnitOfWork.Devices.GetById(id);
-
-            if (device != null)
-            {
-                UnitOfWork.Devices.Delete(device);
-                return UnitOfWork.SaveChanges() > 0;
-            }
-
-            return false;
+            return UnitOfWork.Users.GetActiveUsers();
         }
+
     }
 }

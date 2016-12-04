@@ -1,5 +1,6 @@
 ﻿using DeviceReg.Common.Data.Models;
 using DeviceReg.Repositories;
+using DeviceReg.Services;
 using DeviceReg.Services.Abstract;
 using System;
 using System.Collections.Generic;
@@ -17,11 +18,22 @@ namespace DeviceReg.Common.Services
 
         }
 
-        public void AddDevice(Device device)
+        public void AddDevice(Device device, string email)
         {
-            UnitOfWork.Devices.Add(device);
+            var userService = new UserService(UnitOfWork);
 
-            UnitOfWork.SaveChanges();
+            var user = userService.GetUserByEmail(email);
+
+            if (user != null)
+            {
+                UnitOfWork.Devices.Add(device);
+
+                UnitOfWork.SaveChanges();
+            }
+            else
+            {
+                throw new Exception("Invalid user");
+            }
         }
 
         public bool Delete(int id)

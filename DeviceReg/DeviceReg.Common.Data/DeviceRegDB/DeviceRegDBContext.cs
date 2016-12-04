@@ -22,7 +22,7 @@ namespace DeviceReg.Common.Data.DeviceRegDB
             get; set;
         }
 
-        public virtual DbSet<User> Users
+        public virtual DbSet<AspNetUsers> AspNetUsers
         {
             get; set;
         }

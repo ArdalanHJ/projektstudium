@@ -9,11 +9,23 @@ using System.Data.Entity;
 
 namespace DeviceReg.Repositories
 {
-    public class UserRepository: RepositoryBase<User>
+    public class UserRepository : IdentityRepositoryBase<AspNetUsers>
     {
-        public UserRepository(DbSet<User> dbSet) : base(dbSet)
+        public UserRepository(DbSet<AspNetUsers> dbSet) : base(dbSet)
         {
 
         }
+        public AspNetUsers GetUserByEmail(string email)
+        {
+            return DbSet.FirstOrDefault(u => u.Email == email);
+        }
+
+
+        public IEnumerable<AspNetUsers> GetActiveUsers()
+        {
+            return DbSet.Where(u => !u.LockoutEnabled);
+        }
+
     }
 }
+
