@@ -13,6 +13,7 @@ namespace DeviceReg.Common.Data.Models
         public Device()
         {
             Timestamp = new Timestamp();
+            Tags = new List<Tag>();
         }
 
         public int Id
@@ -63,6 +64,11 @@ namespace DeviceReg.Common.Data.Models
         //}
 
         public Timestamp Timestamp { get; set; }
+
+        public virtual ICollection<Tag> Tags { get; set; }
+
+        public virtual User User { get; set; }
+
 
     }
 }

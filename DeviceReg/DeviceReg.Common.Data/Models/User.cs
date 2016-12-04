@@ -15,6 +15,8 @@ namespace DeviceReg.Common.Data.Models
         public AspNetUsers()
         {
 
+            Tags = new List<Tag>();
+            Devices = new List<Device>();
         }
 
         public string Id { get; set; }
@@ -41,5 +43,9 @@ namespace DeviceReg.Common.Data.Models
 
         public string UserName { get; set; }
 
+
+        public ICollection<Tag> Tags { get; set; }
+
+        public ICollection<Device> Devices { get; set; }
     }
 }

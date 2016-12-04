@@ -16,6 +16,8 @@ namespace DeviceReg.WebApi.Models
             // Benutzerdefinierte Benutzeransprüche hier hinzufügen
             return userIdentity;
         }
+
+        public Common.Data.Models.User User { get; set; }
     }
 
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser>

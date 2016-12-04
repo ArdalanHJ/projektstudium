@@ -2,6 +2,8 @@
 using DeviceReg.Common.Services;
 using DeviceReg.WebApi.Controllers.Base;
 using DeviceReg.WebApi.Models;
+using Microsoft.AspNet.Identity;
+using Microsoft.AspNet.Identity.Owin;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,6 +15,9 @@ using System.Web.Http.Controllers;
 
 namespace DeviceReg.WebApi.Controllers
 {
+
+    [Authorize]
+    //  [RoutePrefix("api/Devices")]
     public class DeviceController : ApiControllerBase
     {
         private DeviceService Service;
@@ -23,6 +28,14 @@ namespace DeviceReg.WebApi.Controllers
             Service = new DeviceService(UnitOfWork);
         }
 
+       
+        public string Get()
+        {
+            //var user = Request.GetOwinContext().GetUserManager<ApplicationUserManager>().FindById(User.Identity.GetUserId());
+            var user = HttpContext.Current.GetOwinContext().GetUserManager<ApplicationUserManager>().FindById(HttpContext.Current.User.Identity.GetUserId());
+            return user.User.Devices.ToString();
+        }
+       
         public HttpResponseMessage Post([FromBody]DeviceModel deviceModel)
         {
             var returncode = HttpStatusCode.BadRequest;
@@ -30,11 +43,12 @@ namespace DeviceReg.WebApi.Controllers
             if (deviceModel != null && deviceModel.IsValid())
             {
                 var device = new Device();
+                var user = HttpContext.Current.GetOwinContext().GetUserManager<ApplicationUserManager>().FindById(HttpContext.Current.User.Identity.GetUserId());
 
                 device.Description = deviceModel.Description;
                 device.Serialnumber = deviceModel.SerialNumber;
                 device.RegularMaintenance = deviceModel.RegularMaintenance;
-
+                device.User = user.User;
                 Service.AddDevice(device, deviceModel.Email);
 
                 returncode = HttpStatusCode.Accepted;
