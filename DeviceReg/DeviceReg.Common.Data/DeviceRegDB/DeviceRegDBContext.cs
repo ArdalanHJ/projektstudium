@@ -38,18 +38,23 @@ namespace DeviceReg.Common.Data.DeviceRegDB
 
         public virtual DbSet<UserLogin> UserLogins { get; set; }
 
+        public virtual DbSet<UserRole> UserRoles { get; set; }
+
+        public virtual DbSet<UserProfile> UserProfiles { get; set; }
+
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
 
-            modelBuilder.Entity<User>()
-                        .HasMany<Role>(s => s.Roles)
-                        .WithMany(c => c.Users)
-                        .Map(cs =>
-                        {
-                            cs.MapLeftKey("UserId");
-                            cs.MapRightKey("RoleId");
-                            cs.ToTable("AspNetUserRoles");
-                        });
+            //modelBuilder.Entity<User>()
+            //            .HasMany<Role>(s => s.Roles)
+            //            .WithMany(c => c.Users);
+                        //.Map(cs =>
+                        //{
+                        //    cs.MapLeftKey("UserId");
+                        //    cs.MapRightKey("RoleId");
+                        //});
+
+            modelBuilder.Entity<UserRole>().Map(e => e.ToTable("AspNetUserRoles"));
 
         }
     }

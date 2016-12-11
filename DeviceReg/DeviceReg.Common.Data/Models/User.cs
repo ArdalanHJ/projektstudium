@@ -53,6 +53,7 @@ namespace DeviceReg.Common.Data.Models
 
         public virtual ICollection<Role> Roles { get; set; }
 
+        public UserProfile Profile { get; set; }
 
     }
 }

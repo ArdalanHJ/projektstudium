@@ -243,8 +243,13 @@
     </Compile>
     <Compile Include="Models\AccountBindingModels.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
+    <Compile Include="Models\CompanyProfile.cs" />
     <Compile Include="Models\DeviceModel.cs" />
+    <Compile Include="Models\GenderType.cs" />
     <Compile Include="Models\IdentityModels.cs" />
+    <Compile Include="Models\IndustryFamilyType.cs" />
+    <Compile Include="Models\LanguageType.cs" />
+    <Compile Include="Models\UserProfileModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Providers\ApplicationOAuthProvider.cs" />
     <Compile Include="Results\ChallengeResult.cs" />

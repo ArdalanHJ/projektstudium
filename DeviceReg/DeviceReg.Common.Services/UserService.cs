@@ -30,5 +30,11 @@ namespace DeviceReg.Services
             return UnitOfWork.Users.GetActiveUsers();
         }
 
+        public UserProfile CreateProfile(UserProfile profile)
+        {
+            UnitOfWork.Profiles.Add(profile);
+            return profile;
+        }
+
     }
 }

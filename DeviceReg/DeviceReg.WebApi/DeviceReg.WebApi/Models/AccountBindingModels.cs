@@ -48,6 +48,8 @@ namespace DeviceReg.WebApi.Models
         [Display(Name = "Kennwort bestätigen")]
         [Compare("Password", ErrorMessage = "Das Kennwort stimmt nicht mit dem Bestätigungskennwort überein.")]
         public string ConfirmPassword { get; set; }
+
+        public UserProfileModel Profile { get; set; }
     }
 
     public class RegisterExternalBindingModel

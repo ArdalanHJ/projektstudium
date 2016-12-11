@@ -51,5 +51,19 @@ namespace DeviceReg.Repositories
             }
 
         }
+
+        private UserProfileRepository _profiles;
+
+        public UserProfileRepository Profiles
+        {
+            get
+            {
+                if (_profiles == null)
+                    _profiles = new UserProfileRepository(_context.UserProfiles);
+
+                return _profiles;
+            }
+
+        }
     }
 }
