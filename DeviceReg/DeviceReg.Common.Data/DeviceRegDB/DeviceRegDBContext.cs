@@ -9,8 +9,6 @@ using Microsoft.AspNet.Identity.EntityFramework;
 
 namespace DeviceReg.Common.Data.DeviceRegDB
 {
-
-    //public class DeviceRegDBContext : IdentityDbContext<ApplicationUser>
     public class DeviceRegDBContext:DbContext
     {
         
@@ -18,6 +16,10 @@ namespace DeviceReg.Common.Data.DeviceRegDB
             Database.SetInitializer(new DeviceRegDBInitializer());
         }
         public virtual DbSet<Device> Devices
+        {
+            get; set;
+        }
+        public virtual DbSet<User> Users
         {
             get; set;
         }
@@ -29,6 +31,38 @@ namespace DeviceReg.Common.Data.DeviceRegDB
         //{
         //   get; set;
         //}
+
+        public virtual DbSet<Role> Roles { get; set; }
+
+        public virtual DbSet<Claim> Claims { get; set; }
+
+        public virtual DbSet<UserLogin> UserLogins { get; set; }
+
+        public virtual DbSet<UserProfile> UserProfiles { get; set; }
+        public object UserRoles { get; internal set; }
+
+        protected override void OnModelCreating(DbModelBuilder modelBuilder)
+        {
+
+            modelBuilder.Entity<User>()
+               .HasMany<Role>(s => s.Roles)
+               .WithMany(c => c.Users)
+               .Map(cs =>
+               {
+                   cs.MapLeftKey("UserId");
+                   cs.MapRightKey("RoleId");
+                   cs.ToTable("AspNetUserRoles");
+               });
+
+            // one-to-one relation between UserProfile and User
+            modelBuilder.Entity<UserProfile>()
+                .HasKey(e => e.UserId);
+
+            modelBuilder.Entity<User>()
+                        .HasRequired(s => s.Profile)
+                        .WithRequiredPrincipal(ad => ad.User)
+                        .WillCascadeOnDelete(false);
+        }
     }
 }
 

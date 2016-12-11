@@ -17,6 +17,8 @@ using DeviceReg.WebApi.Models;
 using DeviceReg.WebApi.Providers;
 using DeviceReg.WebApi.Results;
 using DeviceReg.WebApi.Controllers.Base;
+using DeviceReg.Common.Data.Models;
+using DeviceReg.Services;
 
 namespace DeviceReg.WebApi.Controllers
 {
@@ -26,9 +28,11 @@ namespace DeviceReg.WebApi.Controllers
     {
         private const string LocalLoginProvider = "Local";
         private ApplicationUserManager _userManager;
+        private UserService _userService;
 
         public AccountController()
         {
+            _userService = new UserService(UnitOfWork);
         }
 
         public AccountController(ApplicationUserManager userManager,
@@ -270,7 +274,7 @@ namespace DeviceReg.WebApi.Controllers
             }
             else
             {
-                IEnumerable<Claim> claims = externalLogin.GetClaims();
+                IEnumerable<System.Security.Claims.Claim> claims = externalLogin.GetClaims();
                 ClaimsIdentity identity = new ClaimsIdentity(claims, OAuthDefaults.AuthenticationType);
                 Authentication.SignIn(identity);
             }
@@ -337,6 +341,34 @@ namespace DeviceReg.WebApi.Controllers
             {
                 return GetErrorResult(result);
             }
+
+            var userProfile = new UserProfile();
+
+            userProfile.UserId = user.Id;
+            userProfile.Gender = (int) model.Profile.Gender;
+            userProfile.Prename = model.Profile.Prename;
+            userProfile.Surname = model.Profile.Surname;
+            userProfile.Language = (int) model.Profile.Language;
+            userProfile.Phone = model.Profile.Phone;
+
+            //company
+            userProfile.IndustryFamilyType = (int) model.Profile.Company.IndustryFamilyType;
+            userProfile.IndustryType = model.Profile.Company.IndustryType;
+            userProfile.CompanyName = model.Profile.Company.CompanyName;
+            userProfile.Street = model.Profile.Company.Street;
+            userProfile.StreetNumber = model.Profile.Company.StreetNumber;
+            userProfile.ZipCode = model.Profile.Company.ZipCode;
+            userProfile.City = model.Profile.Company.City;
+            userProfile.Country = model.Profile.Company.Country;
+
+
+            userProfile.SecretQuestion = model.Profile.SecretQuestion;
+            userProfile.SecretAnswer = model.Profile.SecretAnswer;
+            userProfile.TermsAccepted = model.Profile.TermsAccepted;
+
+            userProfile.ConfirmationHash = UserManager.PasswordHasher.HashPassword(model.Email);
+
+            _userService.CreateProfile(userProfile);
 
             return Ok();
         }
@@ -427,14 +459,14 @@ namespace DeviceReg.WebApi.Controllers
             public string ProviderKey { get; set; }
             public string UserName { get; set; }
 
-            public IList<Claim> GetClaims()
+            public IList<System.Security.Claims.Claim> GetClaims()
             {
-                IList<Claim> claims = new List<Claim>();
-                claims.Add(new Claim(ClaimTypes.NameIdentifier, ProviderKey, null, LoginProvider));
+                IList<System.Security.Claims.Claim> claims = new List<System.Security.Claims.Claim>();
+                claims.Add(new System.Security.Claims.Claim(ClaimTypes.NameIdentifier, ProviderKey, null, LoginProvider));
 
                 if (UserName != null)
                 {
-                    claims.Add(new Claim(ClaimTypes.Name, UserName, null, LoginProvider));
+                    claims.Add(new System.Security.Claims.Claim(ClaimTypes.Name, UserName, null, LoginProvider));
                 }
 
                 return claims;
@@ -447,7 +479,7 @@ namespace DeviceReg.WebApi.Controllers
                     return null;
                 }
 
-                Claim providerKeyClaim = identity.FindFirst(ClaimTypes.NameIdentifier);
+                System.Security.Claims.Claim providerKeyClaim = identity.FindFirst(ClaimTypes.NameIdentifier);
 
                 if (providerKeyClaim == null || String.IsNullOrEmpty(providerKeyClaim.Issuer)
                     || String.IsNullOrEmpty(providerKeyClaim.Value))

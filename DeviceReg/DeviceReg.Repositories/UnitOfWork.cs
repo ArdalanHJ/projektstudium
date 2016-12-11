@@ -37,5 +37,33 @@ namespace DeviceReg.Repositories
         {
             _context.Dispose();
         }
+
+        UserRepository _users;
+
+        public UserRepository Users
+        {
+            get
+            {
+                if (_users == null)
+                    _users = new UserRepository(_context.Users);
+
+                return _users;
+            }
+
+        }
+
+        private UserProfileRepository _profiles;
+
+        public UserProfileRepository Profiles
+        {
+            get
+            {
+                if (_profiles == null)
+                    _profiles = new UserProfileRepository(_context.UserProfiles);
+
+                return _profiles;
+            }
+
+        }
     }
 }

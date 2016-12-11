@@ -1,7 +1,3 @@
-using DeviceReg.Common.Data.Models;
-using Microsoft.AspNet.Identity;
-using Microsoft.AspNet.Identity.EntityFramework;
-
 namespace DeviceReg.Common.Data.Migrations
 {
     using System;
@@ -18,31 +14,18 @@ namespace DeviceReg.Common.Data.Migrations
 
         protected override void Seed(DeviceReg.Common.Data.DeviceRegDB.DeviceRegDBContext context)
         {
-            // check whether role is already in db
-            //if (!context.Roles.Any(r => r.Name == "admin"))
-            //{
-            //    var store = new RoleStore<IdentityRole>(context);
-            //    var manager = new RoleManager<IdentityRole>(store);
-            //    var role = new IdentityRole { Name = "admin" };
+            //  This method will be called after migrating to the latest version.
 
-            //    manager.Create(role);
-            //}
-
-            //// check whether user is already in db
-            //if (!context.Users.Any(u => u.UserName == "admin@admin.de"))
-            //{
-            //    var store = new UserStore<ApplicationUser>(context);
-            //    var manager = new UserManager<ApplicationUser>(store);
-            //    var user = new ApplicationUser { UserName = "admin@admin.de" };
-
-            //    /*
-            //     * Important note: user name and password have to match the given criteria in AccountBindungModels.cs.
-            //     * Otherwise the user creation will fail without any error messages.
-            //     * */
-
-            //    manager.Create(user, "Admin123!");
-            //    manager.AddToRole(user.Id, "admin");
-            //}
+            //  You can use the DbSet<T>.AddOrUpdate() helper extension method 
+            //  to avoid creating duplicate seed data. E.g.
+            //
+            //    context.People.AddOrUpdate(
+            //      p => p.FullName,
+            //      new Person { FullName = "Andrew Peters" },
+            //      new Person { FullName = "Brice Lambson" },
+            //      new Person { FullName = "Rowan Miller" }
+            //    );
+            //
         }
     }
 }

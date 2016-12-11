@@ -1,7 +1,10 @@
 ﻿using DeviceReg.Common.Data.Models;
 using DeviceReg.Common.Services;
+using DeviceReg.Services;
 using DeviceReg.WebApi.Controllers.Base;
 using DeviceReg.WebApi.Models;
+using Microsoft.AspNet.Identity;
+using Microsoft.AspNet.Identity.Owin;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,11 +19,13 @@ namespace DeviceReg.WebApi.Controllers
     public class DeviceController : ApiControllerBase
     {
         private DeviceService Service;
+        
         protected override void Initialize(HttpControllerContext controllerContext)
         {
             base.Initialize(controllerContext);
 
             Service = new DeviceService(UnitOfWork);
+            
         }
 
         public HttpResponseMessage Post([FromBody]DeviceModel deviceModel)
@@ -31,9 +36,12 @@ namespace DeviceReg.WebApi.Controllers
             {
                 var device = new Device();
 
+                string currentUserId = User.Identity.GetUserId();
+                 
                 device.Description = deviceModel.Description;
                 device.Serialnumber = deviceModel.SerialNumber;
                 device.RegularMaintenance = deviceModel.RegularMaintenance;
+                device.UserId = currentUserId;
 
                 Service.AddDevice(device);
 

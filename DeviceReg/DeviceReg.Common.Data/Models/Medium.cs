@@ -1,8 +1,11 @@
 ﻿using System.Collections.Generic;
 
-namespace DeviceReg.Common.Data.Models {
-    public class Medium {
-        public Medium() {
+namespace DeviceReg.Common.Data.Models
+{
+    public class Medium
+    {
+        public Medium()
+        {
             Gas = false;
         }
         public int Id

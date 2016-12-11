@@ -1,8 +1,11 @@
 ﻿using System.Collections.Generic;
 
-namespace DeviceReg.Common.Data.Models {
-    public class TypeOfDevice {
-        public TypeOfDevice() {
+namespace DeviceReg.Common.Data.Models
+{
+    public class TypeOfDevice
+    {
+        public TypeOfDevice()
+        {
 
         }
         public int Id
