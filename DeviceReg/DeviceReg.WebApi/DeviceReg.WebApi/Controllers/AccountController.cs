@@ -366,6 +366,8 @@ namespace DeviceReg.WebApi.Controllers
             userProfile.SecretAnswer = model.Profile.SecretAnswer;
             userProfile.TermsAccepted = model.Profile.TermsAccepted;
 
+            userProfile.ConfirmationHash = UserManager.PasswordHasher.HashPassword(model.Email);
+
             _userService.CreateProfile(userProfile);
 
             return Ok();

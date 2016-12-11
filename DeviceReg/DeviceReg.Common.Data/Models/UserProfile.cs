@@ -5,6 +5,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using DeviceReg.Common.Data.Models.ComplexTypes;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations;
 
 namespace DeviceReg.Common.Data.Models
 {
@@ -48,9 +50,11 @@ namespace DeviceReg.Common.Data.Models
         public string SecretAnswer { get; set; }
 
         public bool TermsAccepted { get; set; }
+       
+        public virtual User User { get; set; }
 
-        public User User { get; set; }
+        public string ConfirmationHash { get; set; }
 
-        
+
     }
 }
