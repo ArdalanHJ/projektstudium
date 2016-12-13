@@ -45,17 +45,53 @@ namespace DeviceReg.Common.Data.Migrations
                 c => new
                     {
                         Id = c.Int(nullable: false, identity: true),
+                        Name = c.String(),
                         Description = c.String(),
                         Serialnumber = c.String(),
                         RegularMaintenance = c.Boolean(nullable: false),
                         UserId = c.String(nullable: false, maxLength: 128),
+                        TypeOfDeviceId = c.Int(nullable: false),
+                        MediumId = c.Int(nullable: false),
                         Timestamp_Created = c.DateTime(),
                         Timestamp_Deleted = c.DateTime(),
                         Timestamp_Modified = c.DateTime(),
                     })
                 .PrimaryKey(t => t.Id)
+                .ForeignKey("dbo.Media", t => t.MediumId, cascadeDelete: true)
+                .ForeignKey("dbo.TypeOfDevices", t => t.TypeOfDeviceId, cascadeDelete: true)
                 .ForeignKey("dbo.AspNetUsers", t => t.UserId, cascadeDelete: true)
-                .Index(t => t.UserId);
+                .Index(t => t.UserId)
+                .Index(t => t.TypeOfDeviceId)
+                .Index(t => t.MediumId);
+            
+            CreateTable(
+                "dbo.Media",
+                c => new
+                    {
+                        Id = c.Int(nullable: false, identity: true),
+                        Name = c.String(),
+                        Gas = c.Boolean(nullable: false),
+                    })
+                .PrimaryKey(t => t.Id);
+            
+            CreateTable(
+                "dbo.Tags",
+                c => new
+                    {
+                        Id = c.Int(nullable: false, identity: true),
+                        Name = c.String(),
+                        Description = c.String(),
+                    })
+                .PrimaryKey(t => t.Id);
+            
+            CreateTable(
+                "dbo.TypeOfDevices",
+                c => new
+                    {
+                        Id = c.Int(nullable: false, identity: true),
+                        Name = c.String(),
+                    })
+                .PrimaryKey(t => t.Id);
             
             CreateTable(
                 "dbo.UserProfiles",
@@ -111,6 +147,19 @@ namespace DeviceReg.Common.Data.Migrations
                 .Index(t => t.UserId);
             
             CreateTable(
+                "dbo.TagDevices",
+                c => new
+                    {
+                        Tag_Id = c.Int(nullable: false),
+                        Device_Id = c.Int(nullable: false),
+                    })
+                .PrimaryKey(t => new { t.Tag_Id, t.Device_Id })
+                .ForeignKey("dbo.Tags", t => t.Tag_Id, cascadeDelete: true)
+                .ForeignKey("dbo.Devices", t => t.Device_Id, cascadeDelete: true)
+                .Index(t => t.Tag_Id)
+                .Index(t => t.Device_Id);
+            
+            CreateTable(
                 "dbo.AspNetUserRoles",
                 c => new
                     {
@@ -133,18 +182,30 @@ namespace DeviceReg.Common.Data.Migrations
             DropForeignKey("dbo.AspNetUserRoles", "UserId", "dbo.AspNetUsers");
             DropForeignKey("dbo.UserProfiles", "UserId", "dbo.AspNetUsers");
             DropForeignKey("dbo.Devices", "UserId", "dbo.AspNetUsers");
+            DropForeignKey("dbo.Devices", "TypeOfDeviceId", "dbo.TypeOfDevices");
+            DropForeignKey("dbo.TagDevices", "Device_Id", "dbo.Devices");
+            DropForeignKey("dbo.TagDevices", "Tag_Id", "dbo.Tags");
+            DropForeignKey("dbo.Devices", "MediumId", "dbo.Media");
             DropIndex("dbo.AspNetUserRoles", new[] { "RoleId" });
             DropIndex("dbo.AspNetUserRoles", new[] { "UserId" });
+            DropIndex("dbo.TagDevices", new[] { "Device_Id" });
+            DropIndex("dbo.TagDevices", new[] { "Tag_Id" });
             DropIndex("dbo.AspNetUserLogins", new[] { "UserId" });
             DropIndex("dbo.AspNetRoles", "RoleNameIndex");
             DropIndex("dbo.UserProfiles", new[] { "UserId" });
+            DropIndex("dbo.Devices", new[] { "MediumId" });
+            DropIndex("dbo.Devices", new[] { "TypeOfDeviceId" });
             DropIndex("dbo.Devices", new[] { "UserId" });
             DropIndex("dbo.AspNetUsers", "UserNameIndex");
             DropIndex("dbo.AspNetUserClaims", new[] { "UserId" });
             DropTable("dbo.AspNetUserRoles");
+            DropTable("dbo.TagDevices");
             DropTable("dbo.AspNetUserLogins");
             DropTable("dbo.AspNetRoles");
             DropTable("dbo.UserProfiles");
+            DropTable("dbo.TypeOfDevices");
+            DropTable("dbo.Tags");
+            DropTable("dbo.Media");
             DropTable("dbo.Devices");
             DropTable("dbo.AspNetUsers");
             DropTable("dbo.AspNetUserClaims");

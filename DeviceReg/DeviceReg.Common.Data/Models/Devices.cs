@@ -14,10 +14,15 @@ namespace DeviceReg.Common.Data.Models
     {
         public Device()
         {
+            Tags = new List<Tag>();
             Timestamp = new Timestamp();
         }
 
         public int Id
+        {
+            get; set;
+        }
+        public string Name
         {
             get; set;
         }
@@ -29,37 +34,11 @@ namespace DeviceReg.Common.Data.Models
         {
             get; set;
         }
-        //public string PersonalTag
-        //{
-        //    get; set;
-        //}
         public bool RegularMaintenance
         {
             get; set;
         }
         //public bool RegularCalibration
-        //{
-        //    get; set;
-        //}
-        //public string Text
-        //{
-        //    get; set;
-        //}
-
-        //public int TypeOfDeviceId
-        //{
-        //    get; set;
-        //}
-        //public TypeOfDevice TypeOfDevice
-        //{
-        //    get; set;
-        //}
-
-        //public int MediumId
-        //{
-        //    get; set;
-        //}
-        //public Medium Medium
         //{
         //    get; set;
         //}
@@ -69,6 +48,20 @@ namespace DeviceReg.Common.Data.Models
         
         [ForeignKey("UserId")]
         public User User { get; set; }
+
+        [Required]
+        public int TypeOfDeviceId { get; set; }
+
+        [ForeignKey("TypeOfDeviceId")]
+        public TypeOfDevice TypeOfDevice { get; set; }
+
+        [Required]
+        public int MediumId { get; set; }
+
+        [ForeignKey("MediumId")]
+        public Medium Medium { get; set; }
+
+        public ICollection<Tag> Tags { get; set; }
 
         public Timestamp Timestamp { get; set; }
 

@@ -6,7 +6,7 @@ namespace DeviceReg.Common.Data.Models
     {
         public TypeOfDevice()
         {
-
+            Devices = new List<Device>();
         }
         public int Id
         {

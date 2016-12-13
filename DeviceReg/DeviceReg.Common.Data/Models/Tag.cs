@@ -2,11 +2,10 @@
 
 namespace DeviceReg.Common.Data.Models
 {
-    public class Medium
+    public class Tag
     {
-        public Medium()
+        public Tag()
         {
-            Gas = false;
             Devices = new List<Device>();
         }
         public int Id
@@ -17,7 +16,7 @@ namespace DeviceReg.Common.Data.Models
         {
             get; set;
         }
-        public bool Gas
+        public string Description
         {
             get; set;
         }
