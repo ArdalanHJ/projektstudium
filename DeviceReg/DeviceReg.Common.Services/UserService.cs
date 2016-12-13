@@ -54,5 +54,38 @@ namespace DeviceReg.Services
             }
             throw new Exception("Invalid confirmation hash");
         }
+
+        public bool ResetPassword(string userEmail, string secretAnswer, string newConfirmationHash)
+        {
+            var user = UnitOfWork.Users.GetUserByEmail(userEmail);
+
+            if(user == null)
+            {
+                throw new Exception("Invalid e-mail.");
+            }
+
+            if (user.LockoutEnabled)
+            {
+                throw new Exception("User is locked out.");
+            }
+
+            var profile = UnitOfWork.Profiles.GetProfileByUserId(user.Id);
+
+            if(profile == null)
+            {
+                throw new Exception("User profile missing.");
+            }
+
+            if (secretAnswer != profile.SecretAnswer)
+            {
+                throw new Exception("Secret answer mismatch.");
+            }
+
+            profile.ConfirmationHash = newConfirmationHash;
+
+            UnitOfWork.SaveChanges();
+
+            return true;
+        }
     }
 }

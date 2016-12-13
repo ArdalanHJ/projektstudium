@@ -18,5 +18,10 @@ namespace DeviceReg.Repositories
         {
             return DbSet.FirstOrDefault(up => up.ConfirmationHash == confirmationHash);
         }
+
+        public UserProfile GetProfileByUserId(string userId)
+        {
+            return DbSet.FirstOrDefault(up => up.UserId == userId);
+        }
     }
 }

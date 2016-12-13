@@ -84,8 +84,19 @@ namespace DeviceReg.WebApi.Models
         public string ConfirmPassword { get; set; }
     }
 
+    #region IdentityCustomization
     public class EmailConfirmationBindingModel
     {
         public string ConfirmationHash { get; set; }
     }
+
+    public class ResetPasswordBindingModel
+    {
+        public string UserEmail { get; set; }
+        public string SecretAnswer { get; set; }
+    }
+
+
+
+    #endregion
 }

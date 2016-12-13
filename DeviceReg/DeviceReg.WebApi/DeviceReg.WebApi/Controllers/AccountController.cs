@@ -371,16 +371,18 @@ namespace DeviceReg.WebApi.Controllers
 
 
             userProfile.SecretQuestion = model.UserProfile.SecretQuestion;
-            userProfile.SecretAnswer = UserManager.PasswordHasher.HashPassword(model.UserProfile.SecretAnswer);
+            userProfile.SecretAnswer = model.UserProfile.SecretAnswer;
             userProfile.TermsAccepted = model.UserProfile.TermsAccepted;
 
-            userProfile.ConfirmationHash = UserManager.PasswordHasher.HashPassword(model.Email);
+            userProfile.ConfirmationHash = UserManager.PasswordHasher.HashPassword(Guid.NewGuid().ToString("D"));
 
             _userService.CreateProfile(userProfile);
 
             return Ok();
         }
 
+        #region IdentityCustomization
+        [AllowAnonymous]
         [HttpPost]
         [Route("ConfirmUser")]
         public HttpResponseMessage ConfirmUserEmail(EmailConfirmationBindingModel model)
@@ -405,6 +407,40 @@ namespace DeviceReg.WebApi.Controllers
             }
             return new HttpResponseMessage(returncode);
         }
+
+        [AllowAnonymous]
+        [HttpPost]
+        [Route("ResetPassword")]
+        public HttpResponseMessage ResetPassword(ResetPasswordBindingModel model)
+        {
+            var returncode = HttpStatusCode.BadRequest;
+            try
+            {
+                var secretAnswerHash = model.SecretAnswer;
+                var newConfirmationHash = UserManager.PasswordHasher.HashPassword(Guid.NewGuid().ToString("D"));
+                var success = _userService.ResetPassword(model.UserEmail, secretAnswerHash, newConfirmationHash);
+                if (success)
+                {
+                    returncode = HttpStatusCode.Accepted;
+                }
+            }
+            catch (Exception ex)
+            {
+
+                var resp = new HttpResponseMessage(returncode)
+                {
+                    ReasonPhrase = ex.Message
+                };
+                throw new HttpResponseException(resp);
+            }
+            return new HttpResponseMessage(returncode);
+        }
+
+
+
+        #endregion
+
+
 
         // POST api/Account/RegisterExternal
         [OverrideAuthentication]
