@@ -19,6 +19,8 @@ using DeviceReg.WebApi.Results;
 using DeviceReg.WebApi.Controllers.Base;
 using DeviceReg.Common.Data.Models;
 using DeviceReg.Services;
+using System.Net;
+using System.Web.Http.Controllers;
 
 namespace DeviceReg.WebApi.Controllers
 {
@@ -32,6 +34,12 @@ namespace DeviceReg.WebApi.Controllers
 
         public AccountController()
         {
+            
+        }
+
+        protected override void Initialize(HttpControllerContext controllerContext)
+        {
+            base.Initialize(controllerContext);
             _userService = new UserService(UnitOfWork);
         }
 
@@ -345,32 +353,57 @@ namespace DeviceReg.WebApi.Controllers
             var userProfile = new UserProfile();
 
             userProfile.UserId = user.Id;
-            userProfile.Gender = (int) model.Profile.Gender;
-            userProfile.Prename = model.Profile.Prename;
-            userProfile.Surname = model.Profile.Surname;
-            userProfile.Language = (int) model.Profile.Language;
-            userProfile.Phone = model.Profile.Phone;
+            userProfile.Gender = (int) model.UserProfile.Gender;
+            userProfile.Prename = model.UserProfile.Prename;
+            userProfile.Surname = model.UserProfile.Surname;
+            userProfile.Language = (int) model.UserProfile.Language;
+            userProfile.Phone = model.UserProfile.Phone;
 
             //company
-            userProfile.IndustryFamilyType = (int) model.Profile.Company.IndustryFamilyType;
-            userProfile.IndustryType = model.Profile.Company.IndustryType;
-            userProfile.CompanyName = model.Profile.Company.CompanyName;
-            userProfile.Street = model.Profile.Company.Street;
-            userProfile.StreetNumber = model.Profile.Company.StreetNumber;
-            userProfile.ZipCode = model.Profile.Company.ZipCode;
-            userProfile.City = model.Profile.Company.City;
-            userProfile.Country = model.Profile.Company.Country;
+            userProfile.IndustryFamilyType = (int) model.UserProfile.CompanyProfile.IndustryFamilyType;
+            userProfile.IndustryType = model.UserProfile.CompanyProfile.IndustryType;
+            userProfile.CompanyName = model.UserProfile.CompanyProfile.CompanyName;
+            userProfile.Street = model.UserProfile.CompanyProfile.Street;
+            userProfile.StreetNumber = model.UserProfile.CompanyProfile.StreetNumber;
+            userProfile.ZipCode = model.UserProfile.CompanyProfile.ZipCode;
+            userProfile.City = model.UserProfile.CompanyProfile.City;
+            userProfile.Country = model.UserProfile.CompanyProfile.Country;
 
 
-            userProfile.SecretQuestion = model.Profile.SecretQuestion;
-            userProfile.SecretAnswer = model.Profile.SecretAnswer;
-            userProfile.TermsAccepted = model.Profile.TermsAccepted;
+            userProfile.SecretQuestion = model.UserProfile.SecretQuestion;
+            userProfile.SecretAnswer = UserManager.PasswordHasher.HashPassword(model.UserProfile.SecretAnswer);
+            userProfile.TermsAccepted = model.UserProfile.TermsAccepted;
 
             userProfile.ConfirmationHash = UserManager.PasswordHasher.HashPassword(model.Email);
 
             _userService.CreateProfile(userProfile);
 
             return Ok();
+        }
+
+        [HttpPost]
+        [Route("ConfirmUser")]
+        public HttpResponseMessage ConfirmUserEmail(EmailConfirmationBindingModel model)
+        {
+            var returncode = HttpStatusCode.BadRequest;
+            try
+            {
+                var success = _userService.ConfirmUser(model.ConfirmationHash);
+                if (success)
+                {
+                    returncode = HttpStatusCode.Accepted;
+                }
+            }
+            catch (Exception ex)
+            {
+
+                var resp = new HttpResponseMessage(returncode)
+                {
+                    ReasonPhrase = ex.Message
+                };
+                 throw new HttpResponseException(resp);
+            }
+            return new HttpResponseMessage(returncode);
         }
 
         // POST api/Account/RegisterExternal

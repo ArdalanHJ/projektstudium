@@ -38,7 +38,11 @@ namespace DeviceReg.WebApi.Providers
                 context.SetError("invalid_grant", "Der Benutzername oder das Kennwort ist falsch.");
                 return;
             }
-
+            if (!user.EmailConfirmed)
+            {
+                context.SetError("invalid_grant", "E-Mail has not been confirmed yet.");
+                return;
+            }
             ClaimsIdentity oAuthIdentity = await user.GenerateUserIdentityAsync(userManager,
                OAuthDefaults.AuthenticationType);
             ClaimsIdentity cookiesIdentity = await user.GenerateUserIdentityAsync(userManager,

@@ -9,7 +9,7 @@
 
         public string Phone { get; set; }
 
-        public CompanyProfile Company { get; set; }
+        public CompanyProfile CompanyProfile { get; set; }
 
         public string SecretQuestion { get; set; }
 
