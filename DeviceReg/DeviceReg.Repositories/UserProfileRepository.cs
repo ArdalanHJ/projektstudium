@@ -13,5 +13,15 @@ namespace DeviceReg.Repositories
         public UserProfileRepository(DbSet<UserProfile> dbSet) : base(dbSet)
         {
         }
+
+        public UserProfile GetUserByConfirmationHash(string confirmationHash)
+        {
+            return DbSet.FirstOrDefault(up => up.ConfirmationHash == confirmationHash);
+        }
+
+        public UserProfile GetProfileByUserId(string userId)
+        {
+            return DbSet.FirstOrDefault(up => up.UserId == userId);
+        }
     }
 }

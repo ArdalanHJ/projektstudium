@@ -33,8 +33,59 @@ namespace DeviceReg.Services
         public UserProfile CreateProfile(UserProfile profile)
         {
             UnitOfWork.Profiles.Add(profile);
+            UnitOfWork.SaveChanges();
             return profile;
         }
 
+        public bool ConfirmUser(string confirmationHash)
+        {
+           var profile = UnitOfWork.Profiles.GetUserByConfirmationHash(confirmationHash);
+            if(profile != null)
+            {
+                var user = UnitOfWork.Users.GetUserById(profile.UserId);
+                if(user != null)
+                {
+                    user.EmailConfirmed = true;
+                    profile.ConfirmationHash = null;
+                    UnitOfWork.SaveChanges();
+                    return true;
+                }
+                throw new Exception("User not found.");
+            }
+            throw new Exception("Invalid confirmation hash");
+        }
+
+        public bool ResetPassword(string userEmail, string secretAnswer, string newConfirmationHash)
+        {
+            var user = UnitOfWork.Users.GetUserByEmail(userEmail);
+
+            if(user == null)
+            {
+                throw new Exception("Invalid e-mail.");
+            }
+
+            if (user.LockoutEnabled)
+            {
+                throw new Exception("User is locked out.");
+            }
+
+            var profile = UnitOfWork.Profiles.GetProfileByUserId(user.Id);
+
+            if(profile == null)
+            {
+                throw new Exception("User profile missing.");
+            }
+
+            if (secretAnswer != profile.SecretAnswer)
+            {
+                throw new Exception("Secret answer mismatch.");
+            }
+
+            profile.ConfirmationHash = newConfirmationHash;
+
+            UnitOfWork.SaveChanges();
+
+            return true;
+        }
     }
 }

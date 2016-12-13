@@ -49,7 +49,7 @@ namespace DeviceReg.WebApi.Models
         [Compare("Password", ErrorMessage = "Das Kennwort stimmt nicht mit dem Bestätigungskennwort überein.")]
         public string ConfirmPassword { get; set; }
 
-        public UserProfileModel Profile { get; set; }
+        public UserProfileModel UserProfile { get; set; }
     }
 
     public class RegisterExternalBindingModel
@@ -83,4 +83,20 @@ namespace DeviceReg.WebApi.Models
         [Compare("NewPassword", ErrorMessage = "Das neue Kennwort stimmt nicht mit dem Bestätigungskennwort überein.")]
         public string ConfirmPassword { get; set; }
     }
+
+    #region IdentityCustomization
+    public class EmailConfirmationBindingModel
+    {
+        public string ConfirmationHash { get; set; }
+    }
+
+    public class ResetPasswordBindingModel
+    {
+        public string UserEmail { get; set; }
+        public string SecretAnswer { get; set; }
+    }
+
+
+
+    #endregion
 }

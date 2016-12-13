@@ -31,6 +31,8 @@ namespace DeviceReg.Repositories
             return DbSet.Where(u => !u.LockoutEnabled);
         }
 
+      
+
     }
 }
 
