@@ -16,50 +16,37 @@ namespace DeviceReg.Common.Data.Migrations
 
         protected override void Seed(DeviceReg.Common.Data.DeviceRegDB.DeviceRegDBContext context)
         {
-            //  This method will be called after migrating to the latest version.
-
-            //  You can use the DbSet<T>.AddOrUpdate() helper extension method 
-            //  to avoid creating duplicate seed data. E.g.
-            //
-            //    context.People.AddOrUpdate(
-            //      p => p.FullName,
-            //      new Person { FullName = "Andrew Peters" },
-            //      new Person { FullName = "Brice Lambson" },
-            //      new Person { FullName = "Rowan Miller" }
-            //    );
-            //
-
-            SeedAdmin(context);
+            seedUserWithRole("admin", "admin@devicereg.de", "Admin12!", context);
+            seedUserWithRole("support", "support@devicereg.de", "Support12!", context);
+            seedUserWithRole("customer", "customer@devicereg.de", "Customer12!", context);
         }
 
-
-        public void SeedAdmin(DeviceReg.Common.Data.DeviceRegDB.DeviceRegDBContext context)
+        public void seedUserWithRole(string roleName, string userName, string password, DeviceReg.Common.Data.DeviceRegDB.DeviceRegDBContext context)
         {
-            if (!context.Roles.Any(r => r.Name == "admin"))
+            if (!context.Roles.Any(r => r.Name == roleName))
             {
                 var role = new Role();
-                role.Id = HashPassword("admin");
-                role.Name = "admin";
+                role.Id = HashPassword(roleName);
+                role.Name = roleName;
                 context.Roles.Add(role);
                 context.SaveChanges();
             }
 
-            if (!context.Users.Any(u => u.UserName == "admin@admin.de"))
+            if (!context.Users.Any(u => u.UserName == userName))
             {
-                // UserProfile necessary for admin?
+                // TODO: UserProfile?
                 var user = new User();
                 user.Id = Guid.NewGuid().ToString("D");
-                user.Email = "admin@admin.de";
+                user.Email = userName;
                 user.UserName = user.Email;
                 user.EmailConfirmed = true;
-                user.PasswordHash = HashPassword("Admin12!");
+                user.PasswordHash = HashPassword(password);
                 user.SecurityStamp = Guid.NewGuid().ToString("D");
-                user.Roles.Add(context.Roles.FirstOrDefault(r => r.Name == "admin"));
+                user.Roles.Add(context.Roles.FirstOrDefault(r => r.Name == roleName));
                 context.Users.Add(user);
                 context.SaveChanges();
             }
         }
-
 
         // TODO: Transfer this method to utility class (to be implemented, but where?).
         public static string HashPassword(string password)
