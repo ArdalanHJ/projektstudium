@@ -55,7 +55,7 @@ namespace DeviceReg.Services
             throw new Exception("Invalid confirmation hash");
         }
 
-        public bool ResetPassword(string userEmail, string secretAnswer, string newConfirmationHash)
+        public bool ResetPassword(string userEmail, string secretAnswerHash, string newConfirmationHash)
         {
             var user = UnitOfWork.Users.GetUserByEmail(userEmail);
 
@@ -76,7 +76,7 @@ namespace DeviceReg.Services
                 throw new Exception("User profile missing.");
             }
 
-            if (secretAnswer != profile.SecretAnswer)
+            if (secretAnswerHash != profile.SecretAnswer)
             {
                 throw new Exception("Secret answer mismatch.");
             }

@@ -371,7 +371,7 @@ namespace DeviceReg.WebApi.Controllers
 
 
             userProfile.SecretQuestion = model.UserProfile.SecretQuestion;
-            userProfile.SecretAnswer = model.UserProfile.SecretAnswer;
+            userProfile.SecretAnswer = model.UserProfile.SecretAnswer.GetHashCode().ToString();
             userProfile.TermsAccepted = model.UserProfile.TermsAccepted;
 
             userProfile.ConfirmationHash = UserManager.PasswordHasher.HashPassword(Guid.NewGuid().ToString("D"));
@@ -416,7 +416,7 @@ namespace DeviceReg.WebApi.Controllers
             var returncode = HttpStatusCode.BadRequest;
             try
             {
-                var secretAnswerHash = model.SecretAnswer;
+                var secretAnswerHash = model.SecretAnswer.GetHashCode().ToString();
                 var newConfirmationHash = UserManager.PasswordHasher.HashPassword(Guid.NewGuid().ToString("D"));
                 var success = _userService.ResetPassword(model.UserEmail, secretAnswerHash, newConfirmationHash);
                 if (success)
@@ -436,11 +436,7 @@ namespace DeviceReg.WebApi.Controllers
             return new HttpResponseMessage(returncode);
         }
 
-
-
         #endregion
-
-
 
         // POST api/Account/RegisterExternal
         [OverrideAuthentication]
