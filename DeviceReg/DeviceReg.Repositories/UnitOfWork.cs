@@ -65,5 +65,19 @@ namespace DeviceReg.Repositories
             }
 
         }
+
+        private RoleRepository _roles;
+
+        public RoleRepository Roles
+        {
+            get
+            {
+                if (_roles == null)
+                    _roles = new RoleRepository(_context.Roles);
+
+                return _roles;
+            }
+
+        }
     }
 }

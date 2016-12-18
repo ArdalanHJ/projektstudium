@@ -50,6 +50,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="IdentityAbstract.cs" />
+    <Compile Include="RoleRepository.cs" />
     <Compile Include="UnitOfWork.cs" />
     <Compile Include="DeviceRepository.cs" />
     <Compile Include="RepositoryBase.cs" />

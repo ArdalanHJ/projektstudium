@@ -16,12 +16,12 @@ namespace DeviceReg.Common.Data.Migrations
 
         protected override void Seed(DeviceReg.Common.Data.DeviceRegDB.DeviceRegDBContext context)
         {
-            seedUserWithRole("admin", "admin@devicereg.de", "Admin12!", context);
-            seedUserWithRole("support", "support@devicereg.de", "Support12!", context);
-            seedUserWithRole("customer", "customer@devicereg.de", "Customer12!", context);
+            SeedUserWithRole("admin", "admin@devicereg.de", "Admin12!", context);
+            SeedUserWithRole("support", "support@devicereg.de", "Support12!", context);
+            SeedUserWithRole("customer", "customer@devicereg.de", "Customer12!", context);
         }
 
-        public void seedUserWithRole(string roleName, string userName, string password, DeviceReg.Common.Data.DeviceRegDB.DeviceRegDBContext context)
+        public void SeedUserWithRole(string roleName, string userName, string password, DeviceReg.Common.Data.DeviceRegDB.DeviceRegDBContext context)
         {
             if (!context.Roles.Any(r => r.Name == roleName))
             {

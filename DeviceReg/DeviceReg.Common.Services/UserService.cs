@@ -87,5 +87,24 @@ namespace DeviceReg.Services
 
             return true;
         }
+
+        public bool AddRoleToUser(string userId, string roleName)
+        {
+            var user = UnitOfWork.Users.GetUserById(userId);
+            if (user == null)
+            {
+                throw new Exception("User not found.");
+            }
+            var role = UnitOfWork.Roles.GetRoleByName(roleName);
+
+            if(role == null)
+            {
+                throw new Exception("Role not found.");
+            }
+
+            user.Roles.Add(role);
+            UnitOfWork.SaveChanges();
+            return true;
+        }
     }
 }

@@ -34,7 +34,6 @@ namespace DeviceReg.WebApi.Controllers
 
         public AccountController()
         {
-            
         }
 
         protected override void Initialize(HttpControllerContext controllerContext)
@@ -369,14 +368,13 @@ namespace DeviceReg.WebApi.Controllers
             userProfile.City = model.UserProfile.CompanyProfile.City;
             userProfile.Country = model.UserProfile.CompanyProfile.Country;
 
-
             userProfile.SecretQuestion = model.UserProfile.SecretQuestion;
             userProfile.SecretAnswer = model.UserProfile.SecretAnswer.GetHashCode().ToString();
             userProfile.TermsAccepted = model.UserProfile.TermsAccepted;
-
             userProfile.ConfirmationHash = UserManager.PasswordHasher.HashPassword(Guid.NewGuid().ToString("D"));
 
             _userService.CreateProfile(userProfile);
+            _userService.AddRoleToUser(user.Id, "customer");
 
             return Ok();
         }
