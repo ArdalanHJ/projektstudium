@@ -79,5 +79,33 @@ namespace DeviceReg.Repositories
             }
 
         }
+
+        private MediaRepository _media;
+
+        public MediaRepository Media
+        {
+            get
+            {
+                if (_media == null)
+                    _media = new MediaRepository(_context.Media);
+
+                return _media;
+            }
+
+        }
+
+        private TypeOfDeviceRepository _types;
+
+        public TypeOfDeviceRepository Types
+        {
+            get
+            {
+                if (_types == null)
+                    _types = new TypeOfDeviceRepository(_context.Types);
+
+                return _types;
+            }
+
+        }
     }
 }

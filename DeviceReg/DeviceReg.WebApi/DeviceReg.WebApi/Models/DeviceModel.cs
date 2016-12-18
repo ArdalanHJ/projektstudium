@@ -13,6 +13,10 @@ namespace DeviceReg.WebApi.Models
 
         public Boolean RegularMaintenance { get; set; }
 
+        public int TypeOfDeviceId { get; set; }
+
+        public int MediumId { get; set; }
+
         public bool IsValid()
         {
             return true;

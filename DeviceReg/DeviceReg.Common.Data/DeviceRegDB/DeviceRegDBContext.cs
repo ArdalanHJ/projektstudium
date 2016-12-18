@@ -41,6 +41,10 @@ namespace DeviceReg.Common.Data.DeviceRegDB
         public virtual DbSet<UserProfile> UserProfiles { get; set; }
         public object UserRoles { get; internal set; }
 
+        public virtual DbSet<Medium> Media { get; set; }
+
+        public virtual DbSet<TypeOfDevice> Types { get; set; }
+
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
 

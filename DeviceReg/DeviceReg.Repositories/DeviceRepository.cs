@@ -15,5 +15,10 @@ namespace DeviceReg.Repositories
         {
 
         }
+
+        public IEnumerable<Device> GetDevicesByUserId(string userId)
+        {
+           return DbSet.Where(d => d.UserId == userId);
+        }
     }
 }

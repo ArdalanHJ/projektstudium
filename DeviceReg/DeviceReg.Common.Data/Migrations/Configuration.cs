@@ -19,8 +19,15 @@ namespace DeviceReg.Common.Data.Migrations
             SeedUserWithRole("admin", "admin@devicereg.de", "Admin12!", context);
             SeedUserWithRole("support", "support@devicereg.de", "Support12!", context);
             SeedUserWithRole("customer", "customer@devicereg.de", "Customer12!", context);
+
+            SeedMedium("Testmedium1", true, context);
+            SeedMedium("Testmedium2", false, context);
+
+            SeedTypeOfDevice("TestType1", context);
+            SeedTypeOfDevice("TestType2", context);
         }
 
+        #region User
         public void SeedUserWithRole(string roleName, string userName, string password, DeviceReg.Common.Data.DeviceRegDB.DeviceRegDBContext context)
         {
             if (!context.Roles.Any(r => r.Name == roleName))
@@ -48,6 +55,35 @@ namespace DeviceReg.Common.Data.Migrations
             }
         }
 
+        #endregion
+        #region Devices
+        public void SeedMedium(string mediumName, bool gas, DeviceReg.Common.Data.DeviceRegDB.DeviceRegDBContext context)
+        {
+            if (!context.Media.Any(m => m.Name == mediumName))
+            {
+                var medium = new Medium();
+                medium.Name = mediumName;
+                medium.Gas = gas;
+                medium.Timestamp.Created = DateTime.UtcNow;
+                context.Media.Add(medium);
+                context.SaveChanges();
+            }
+        }
+
+        public void SeedTypeOfDevice(string typeName, DeviceReg.Common.Data.DeviceRegDB.DeviceRegDBContext context)
+        {
+            if (!context.Types.Any(t => t.Name == typeName))
+            {
+                var typeOfDevice = new TypeOfDevice();
+                typeOfDevice.Name = typeName;
+                typeOfDevice.Timestamp.Created = DateTime.UtcNow;
+                context.Types.Add(typeOfDevice);
+                context.SaveChanges();
+            }
+        }
+        #endregion
+
+        #region Utility
         // TODO: Transfer this method to utility class (to be implemented, but where?).
         public static string HashPassword(string password)
         {
@@ -67,5 +103,7 @@ namespace DeviceReg.Common.Data.Migrations
             Buffer.BlockCopy(buffer2, 0, dst, 0x11, 0x20);
             return Convert.ToBase64String(dst);
         }
+
+        #endregion
     }
 }

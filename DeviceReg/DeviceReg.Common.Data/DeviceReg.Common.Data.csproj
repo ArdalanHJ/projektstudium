@@ -63,11 +63,17 @@
     <Compile Include="Migrations\201612132001385_Initial.Designer.cs">
       <DependentUpon>201612132001385_Initial.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201612181645177_AddedIEntityToMediumAndTypeOfDevice.cs" />
+    <Compile Include="Migrations\201612181645177_AddedIEntityToMediumAndTypeOfDevice.Designer.cs">
+      <DependentUpon>201612181645177_AddedIEntityToMediumAndTypeOfDevice.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Claim.cs" />
     <Compile Include="Models\ComplexTypes\Timestamp.cs" />
     <Compile Include="Models\Devices.cs" />
     <Compile Include="Interfaces\IEntity.cs" />
+    <Compile Include="Models\DTOs\DeviceDTO.cs" />
+    <Compile Include="Models\DTOs\LabelDTO.cs" />
     <Compile Include="Models\Medium.cs" />
     <Compile Include="Models\Role.cs" />
     <Compile Include="Models\Tag.cs" />
@@ -84,6 +90,9 @@
   <ItemGroup>
     <EmbeddedResource Include="Migrations\201612132001385_Initial.resx">
       <DependentUpon>201612132001385_Initial.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201612181645177_AddedIEntityToMediumAndTypeOfDevice.resx">
+      <DependentUpon>201612181645177_AddedIEntityToMediumAndTypeOfDevice.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

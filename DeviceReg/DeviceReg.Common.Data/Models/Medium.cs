@@ -1,13 +1,17 @@
-﻿using System.Collections.Generic;
+﻿using DeviceReg.Common.Data.Interfaces;
+using System.Collections.Generic;
+using DeviceReg.Common.Data.Models.ComplexTypes;
+using System;
 
 namespace DeviceReg.Common.Data.Models
 {
-    public class Medium
+    public class Medium: IEntity
     {
         public Medium()
         {
             Gas = false;
             Devices = new List<Device>();
+            Timestamp = new Timestamp();
         }
         public int Id
         {
@@ -25,5 +29,8 @@ namespace DeviceReg.Common.Data.Models
         {
             get; set;
         }
+
+        public Timestamp Timestamp { get; set; }
+        
     }
 }

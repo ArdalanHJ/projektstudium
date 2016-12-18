@@ -42,6 +42,8 @@ namespace DeviceReg.WebApi.Controllers
                 device.Serialnumber = deviceModel.SerialNumber;
                 device.RegularMaintenance = deviceModel.RegularMaintenance;
                 device.UserId = currentUserId;
+                device.MediumId = deviceModel.MediumId;
+                device.TypeOfDeviceId = deviceModel.TypeOfDeviceId;
 
                 Service.AddDevice(device);
 
