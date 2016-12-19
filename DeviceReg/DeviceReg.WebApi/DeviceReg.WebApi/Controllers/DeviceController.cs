@@ -66,5 +66,65 @@ namespace DeviceReg.WebApi.Controllers
             return new HttpResponseMessage(returncode);
         }
 
+       
+        /// <summary>
+        /// Creates all Devices in the uploaded file
+        /// </summary>
+        /// <param name="listOfDevices"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("bulk")]
+        public IHttpActionResult PostListOfDevice([FromBody]HttpPostedFile listOfDevices)
+        {
+            return NotFound(); 
+        }
+
+        /// <summary>
+        /// Get All Devices of the current User
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("")]
+        public IHttpActionResult Get()
+        {
+            return NotFound();
+        }
+        /// <summary>
+        /// Get specified Device of current User
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("{id}")]
+        public IHttpActionResult Get(string id)
+        {
+            return NotFound();
+        }
+
+        /// <summary>
+        /// Update specified Device of current User 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="deviceModel"></param>
+        /// <returns></returns>
+        [HttpPut]
+        [Route("{id}")]
+        public IHttpActionResult Update()
+        {
+            return NotFound(); 
+        }
+        /// <summary>
+        /// Add Label to Device
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="label"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("{id}/addlabel")]
+        public IHttpActionResult AddLabel(string id, [FromBody] string label)
+        {
+            return NotFound();
+        }
+ 
     }
 }
