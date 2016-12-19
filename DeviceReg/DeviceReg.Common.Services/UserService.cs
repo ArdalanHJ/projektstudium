@@ -21,7 +21,9 @@ namespace DeviceReg.Services
 
         public User GetUserById(string id)
         {
-            return UnitOfWork.Users.GetUserById(id);
+            var user = UnitOfWork.Users.GetUserById(id);
+            if (user == null) throw new Exception("User not found.");
+            return user;
         }
 
 

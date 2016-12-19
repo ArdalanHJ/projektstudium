@@ -36,7 +36,7 @@ namespace DeviceReg.WebApi.Controllers
         /// <returns></returns>
         [HttpPost]
         [Route("device")]
-        public HttpResponseMessage CreateDeviceForUser(CreateDeviceForUserBindingModel model)
+        public IHttpActionResult CreateDeviceForUser(CreateDeviceForUserBindingModel model)
         {
             return ControllerUtility.Guard(() =>
             {
@@ -53,7 +53,7 @@ namespace DeviceReg.WebApi.Controllers
                 };
 
                 _deviceService.Add(device);
-                return Request.CreateResponse(HttpStatusCode.OK);
+                return Ok();
             });
         }
 
@@ -64,7 +64,7 @@ namespace DeviceReg.WebApi.Controllers
         /// <returns></returns>
         [HttpPut]
         [Route("device")]
-        public HttpResponseMessage UpdateDeviceForUser(UpdateDeviceBindingModel model)
+        public IHttpActionResult UpdateDeviceForUser(UpdateDeviceBindingModel model)
         {
             return ControllerUtility.Guard(() =>
             {
@@ -78,7 +78,7 @@ namespace DeviceReg.WebApi.Controllers
                 device.MediumId = model.MediumId;
 
                 _deviceService.Update(device);
-                return Request.CreateResponse(HttpStatusCode.OK);
+                return Ok();
             });
         }
 
@@ -90,12 +90,12 @@ namespace DeviceReg.WebApi.Controllers
         /// <returns></returns>
         [HttpDelete]
         [Route("device/{deviceId}")]
-        public HttpResponseMessage DeleteDevice(int deviceId)
+        public IHttpActionResult DeleteDevice(int deviceId)
         {
             return ControllerUtility.Guard(() =>
             {
                 _deviceService.Delete(deviceId);
-                return Request.CreateResponse(HttpStatusCode.OK);
+                return Ok();
             });
         }
 
@@ -106,12 +106,12 @@ namespace DeviceReg.WebApi.Controllers
         /// <returns></returns>
         [HttpDelete]
         [Route("devices/{userId}")]
-        public HttpResponseMessage DeleteDevicesByUserId(string userId)
+        public IHttpActionResult DeleteDevicesByUserId(string userId)
         {
             return ControllerUtility.Guard(() =>
             {
                 _deviceService.DeleteAllByUserId(userId);
-                return Request.CreateResponse(HttpStatusCode.OK);
+                return Ok();
             });
         }
 
@@ -123,12 +123,12 @@ namespace DeviceReg.WebApi.Controllers
         /// <returns></returns>
         [HttpGet]
         [Route("devices/{userId}")]
-        public HttpResponseMessage GetDevicesByUser(string userId)
+        public IHttpActionResult GetDevicesByUser(string userId)
         {
             return ControllerUtility.Guard(() =>
             {
                 IEnumerable<DeviceDTO> devices = _deviceService.GetAllActiveByUserId(userId);
-                return Request.CreateResponse(HttpStatusCode.OK, devices); ;
+                return Ok(devices);
             });
         }
 
@@ -139,12 +139,12 @@ namespace DeviceReg.WebApi.Controllers
         /// <returns></returns>
         [HttpGet]
         [Route("devices/{userId}/all")]
-        public HttpResponseMessage GetAllDevicesByUser(string userId)
+        public IHttpActionResult GetAllDevicesByUser(string userId)
         {
             return ControllerUtility.Guard(() =>
             {
                 IEnumerable<DeviceDTO> devices = _deviceService.GetAllByUserId(userId);
-                return Request.CreateResponse(HttpStatusCode.OK, devices); ;
+                return Ok(devices);
             });
         }
 
@@ -155,12 +155,12 @@ namespace DeviceReg.WebApi.Controllers
         /// <returns></returns>
         [HttpGet]
         [Route("devices/{userId}/deleted")]
-        public HttpResponseMessage GetAllDeletedDevicesByUser(string userId)
+        public IHttpActionResult GetAllDeletedDevicesByUser(string userId)
         {
             return ControllerUtility.Guard(() =>
             {
                 IEnumerable<DeviceDTO> devices = _deviceService.GetAllDeletedByUserId(userId);
-                return Request.CreateResponse(HttpStatusCode.OK, devices);
+                return Ok(devices);
             });
         }
        

@@ -10,7 +10,7 @@ namespace DeviceReg.WebApi.Utility
 {
     public class ControllerUtility
     {
-        public static HttpResponseMessage Guard(Func<HttpResponseMessage> function)
+        public static IHttpActionResult Guard(Func<IHttpActionResult> function)
         {
             var returncode = HttpStatusCode.BadRequest;
             try
