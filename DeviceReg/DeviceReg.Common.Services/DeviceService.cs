@@ -19,30 +19,14 @@ namespace DeviceReg.Common.Services
 
         }
 
-        public bool AddDevice(Device device)
+        public bool Add(Device device)
         {
-            if (device == null)
+
+            if (IsValidDevice(device))
             {
-                throw new Exception("Invalid device");
+                UnitOfWork.Devices.Add(device);
+                UnitOfWork.SaveChanges();
             }
-
-            var medium = UnitOfWork.Media.GetById(device.MediumId);
-
-            if(medium == null)
-            {
-                throw new Exception("Medium not found");
-            }
-
-            var typeOfDevice = UnitOfWork.Types.GetById(device.TypeOfDeviceId);
-
-            if(typeOfDevice == null)
-            {
-                throw new Exception("Type of device not found");
-            }
-
-
-            UnitOfWork.Devices.Add(device);
-            UnitOfWork.SaveChanges();
 
             return true;
         }
@@ -60,17 +44,12 @@ namespace DeviceReg.Common.Services
             return false;
         }
 
-        public IEnumerable<DeviceDTO> GetDevicesByUser(string userId)
+        public IEnumerable<DeviceDTO> GetAllByUserId(string userId)
         {
-            var user = UnitOfWork.Users.GetUserById(userId);
-
-            if(user == null)
-            {
-                throw new Exception("User not found.");
-            }
+            IsValidUser(userId);
             
-            var devices = UnitOfWork.Devices.GetDevicesByUserId(user.Id);
-            var deviceDTOs = from d in devices
+            var devices = UnitOfWork.Devices.GetAllByUserId(userId);
+            var deviceDTOs = from d in devices 
                              select new DeviceDTO()
                              {
                                  Id = d.Id,
@@ -92,6 +71,88 @@ namespace DeviceReg.Common.Services
                              };
 
             return deviceDTOs;
+        }
+
+        public IEnumerable<DeviceDTO> GetAllActiveByUserId(string userId)
+        {
+           return GetAllByUserId(userId).Where(d => d.Timestamp.Deleted == null);
+        }
+
+        public IEnumerable<DeviceDTO> GetAllDeletedByUserId(string userId)
+        {
+            return GetAllByUserId(userId).Where(d => d.Timestamp.Deleted != null);
+        }
+
+        public Device GetById(int deviceId)
+        {
+            var device = UnitOfWork.Devices.GetById(deviceId);
+            if(device == null)
+            {
+                throw new Exception("Device not found.");
+            }
+
+            return device;
+        }
+
+        public bool Update(Device device)
+        {
+            if (IsValidDevice(device))
+            {
+                UnitOfWork.Devices.Update(device);
+                UnitOfWork.SaveChanges();
+            }
+
+            return true;
+        }
+
+        public bool DeleteAllByUserId(string userId)
+        {
+                IsValidUser(userId);
+
+                var devices = UnitOfWork.Devices.GetAllByUserId(userId);
+
+                foreach (Device device in devices)
+                {
+                    UnitOfWork.Devices.Delete(device);
+                }
+
+                return UnitOfWork.SaveChanges() > 0;
+        }
+
+        private bool IsValidUser(string userId)
+        {
+            var user = UnitOfWork.Users.GetUserById(userId);
+
+            if (user == null)
+            {
+                throw new Exception("User not found.");
+            }
+
+            return true;
+        }
+
+        private bool IsValidDevice(Device device)
+        {
+            if (device == null)
+            {
+                throw new Exception("Invalid device");
+            }
+
+            var medium = UnitOfWork.Media.GetById(device.MediumId);
+
+            if (medium == null)
+            {
+                throw new Exception("Medium not found");
+            }
+
+            var typeOfDevice = UnitOfWork.Types.GetById(device.TypeOfDeviceId);
+
+            if (typeOfDevice == null)
+            {
+                throw new Exception("Type of device not found");
+            }
+
+            return true;
         }
     }
 }

@@ -7,6 +7,7 @@ namespace DeviceReg.WebApi.Models
 {
     public class DeviceModel
     {
+        public string Name { get; set; }
         public string SerialNumber { get; set; }
 
         public string Description { get; set; }

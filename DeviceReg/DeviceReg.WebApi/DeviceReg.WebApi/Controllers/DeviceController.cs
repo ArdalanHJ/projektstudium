@@ -37,7 +37,8 @@ namespace DeviceReg.WebApi.Controllers
                 var device = new Device();
 
                 string currentUserId = User.Identity.GetUserId();
-                 
+
+                device.Name = deviceModel.Name;
                 device.Description = deviceModel.Description;
                 device.Serialnumber = deviceModel.SerialNumber;
                 device.RegularMaintenance = deviceModel.RegularMaintenance;
@@ -45,7 +46,7 @@ namespace DeviceReg.WebApi.Controllers
                 device.MediumId = deviceModel.MediumId;
                 device.TypeOfDeviceId = deviceModel.TypeOfDeviceId;
 
-                Service.AddDevice(device);
+                Service.Add(device);
 
                 returncode = HttpStatusCode.Accepted;
             }

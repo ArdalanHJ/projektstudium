@@ -4,15 +4,10 @@ using DeviceReg.Services;
 using DeviceReg.WebApi.Controllers.Base;
 using DeviceReg.WebApi.Models;
 using DeviceReg.WebApi.Models.DTOs;
-using Microsoft.AspNet.Identity;
-using Microsoft.AspNet.Identity.Owin;
-using System;
+using DeviceReg.WebApi.Utility;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net;
 using System.Net.Http;
-using System.Threading.Tasks;
-using System.Web;
 using System.Web.Http;
 using System.Web.Http.Controllers;
 
@@ -24,7 +19,6 @@ namespace DeviceReg.WebApi.Controllers
     {
         private UserService _userService;
         private DeviceService _deviceService;
-        private ApplicationUserManager _userManager;
 
         protected override void Initialize(HttpControllerContext controllerContext)
         {
@@ -35,37 +29,140 @@ namespace DeviceReg.WebApi.Controllers
 
         }
 
-        public ApplicationUserManager UserManager
-        {
-            get
-            {
-                return _userManager ?? Request.GetOwinContext().GetUserManager<ApplicationUserManager>();
-            }
-            private set
-            {
-                _userManager = value;
-            }
-        }
-
+        /// <summary>
+        /// Creates a device for a specific user
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         [HttpPost]
-        [Route("devices")]
-        public HttpResponseMessage GetDevicesByUser(UserIdBindingModel model)
+        [Route("device")]
+        public HttpResponseMessage CreateDeviceForUser(CreateDeviceForUserBindingModel model)
         {
-            var returncode = HttpStatusCode.BadRequest;
-            try
+            return ControllerUtility.Guard(() =>
             {
-                IEnumerable<DeviceDTO> devices = _deviceService.GetDevicesByUser(model.UserId);
-                return Request.CreateResponse(HttpStatusCode.OK, devices); ;
-            }
-            catch (Exception ex)
-            {
-                var response = new HttpResponseMessage(returncode)
+                var user = _userService.GetUserById(model.UserId);
+                var device = new Device()
                 {
-                    ReasonPhrase = ex.Message
+                    Name = model.Device.Name,
+                    Description = model.Device.Description,
+                    Serialnumber = model.Device.SerialNumber,
+                    RegularMaintenance = model.Device.RegularMaintenance,
+                    UserId = user.Id,
+                    TypeOfDeviceId = model.Device.TypeOfDeviceId,
+                    MediumId = model.Device.MediumId
                 };
-                throw new HttpResponseException(response);
-            }
+
+                _deviceService.Add(device);
+                return Request.CreateResponse(HttpStatusCode.OK);
+            });
         }
 
+        /// <summary>
+        /// Updates a device for a specific user
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        [HttpPut]
+        [Route("device")]
+        public HttpResponseMessage UpdateDeviceForUser(UpdateDeviceBindingModel model)
+        {
+            return ControllerUtility.Guard(() =>
+            {
+                var device = _deviceService.GetById(model.DeviceId);
+
+                device.Name = model.Name;
+                device.Description = model.Description;
+                device.Serialnumber = model.SerialNumber;
+                device.RegularMaintenance = model.RegularMaintenance;
+                device.TypeOfDeviceId = model.TypeOfDeviceId;
+                device.MediumId = model.MediumId;
+
+                _deviceService.Update(device);
+                return Request.CreateResponse(HttpStatusCode.OK);
+            });
+        }
+
+
+        /// <summary>
+        /// Delets a specific device
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        [HttpDelete]
+        [Route("device/{deviceId}")]
+        public HttpResponseMessage DeleteDevice(int deviceId)
+        {
+            return ControllerUtility.Guard(() =>
+            {
+                _deviceService.Delete(deviceId);
+                return Request.CreateResponse(HttpStatusCode.OK);
+            });
+        }
+
+        /// <summary>
+        /// Deletes all devices for a specific user
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        [HttpDelete]
+        [Route("devices/{userId}")]
+        public HttpResponseMessage DeleteDevicesByUserId(string userId)
+        {
+            return ControllerUtility.Guard(() =>
+            {
+                _deviceService.DeleteAllByUserId(userId);
+                return Request.CreateResponse(HttpStatusCode.OK);
+            });
+        }
+
+
+        /// <summary>
+        /// Get all active (non deleted) devices from a specific user.
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("devices/{userId}")]
+        public HttpResponseMessage GetDevicesByUser(string userId)
+        {
+            return ControllerUtility.Guard(() =>
+            {
+                IEnumerable<DeviceDTO> devices = _deviceService.GetAllActiveByUserId(userId);
+                return Request.CreateResponse(HttpStatusCode.OK, devices); ;
+            });
+        }
+
+        /// <summary>
+        /// Get all devices (deleted/non deleted) from a specific user.
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("devices/{userId}/all")]
+        public HttpResponseMessage GetAllDevicesByUser(string userId)
+        {
+            return ControllerUtility.Guard(() =>
+            {
+                IEnumerable<DeviceDTO> devices = _deviceService.GetAllByUserId(userId);
+                return Request.CreateResponse(HttpStatusCode.OK, devices); ;
+            });
+        }
+
+        /// <summary>
+        /// Get all deleted devices from a specific user.
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("devices/{userId}/deleted")]
+        public HttpResponseMessage GetAllDeletedDevicesByUser(string userId)
+        {
+            return ControllerUtility.Guard(() =>
+            {
+                IEnumerable<DeviceDTO> devices = _deviceService.GetAllDeletedByUserId(userId);
+                return Request.CreateResponse(HttpStatusCode.OK, devices);
+            });
+        }
+       
     }
 }
