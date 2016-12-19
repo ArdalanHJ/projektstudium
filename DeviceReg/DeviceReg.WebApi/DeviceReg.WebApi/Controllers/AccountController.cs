@@ -330,10 +330,44 @@ namespace DeviceReg.WebApi.Controllers
             return logins;
         }
 
-        // POST api/Account/Register
+        /// <summary>
+        /// Registers customer
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         [AllowAnonymous]
         [Route("Register")]
-        public async Task<IHttpActionResult> Register(RegisterBindingModel model)
+        public async Task<IHttpActionResult> RegisterCustomer(RegisterBindingModel model)
+        {
+           return await RegisterWithRole(model, "customer", false);
+        }
+
+        /// <summary>
+        /// Registers admin
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        [Authorize(Roles = "admin")]
+        [Route("Register/admin")]
+        public async Task<IHttpActionResult> RegisterAdmin(RegisterBindingModel model)
+        {
+            return await RegisterWithRole(model, "admin", true);
+        }
+
+        /// <summary>
+        /// Registers support
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        [Authorize(Roles = "admin")]
+        [Route("Register/support")]
+        public async Task<IHttpActionResult> RegisterSupport(RegisterBindingModel model)
+        {
+            return await RegisterWithRole(model, "support", true);
+        }
+
+        #region IdentityCustomization
+        public async Task<IHttpActionResult> RegisterWithRole(RegisterBindingModel model, string roleName, bool confirm)
         {
             if (!ModelState.IsValid)
             {
@@ -342,6 +376,8 @@ namespace DeviceReg.WebApi.Controllers
 
             var user = new ApplicationUser() { UserName = model.Email, Email = model.Email };
 
+            user.EmailConfirmed = confirm;
+
             IdentityResult result = await UserManager.CreateAsync(user, model.Password);
 
             if (!result.Succeeded)
@@ -349,37 +385,38 @@ namespace DeviceReg.WebApi.Controllers
                 return GetErrorResult(result);
             }
 
-            var userProfile = new UserProfile();
+            if (model.UserProfile != null)
+            {
+                var userProfile = new UserProfile();
 
-            userProfile.UserId = user.Id;
-            userProfile.Gender = (int) model.UserProfile.Gender;
-            userProfile.Prename = model.UserProfile.Prename;
-            userProfile.Surname = model.UserProfile.Surname;
-            userProfile.Language = (int) model.UserProfile.Language;
-            userProfile.Phone = model.UserProfile.Phone;
+                userProfile.UserId = user.Id;
+                userProfile.Gender = (int)model.UserProfile.Gender;
+                userProfile.Prename = model.UserProfile.Prename;
+                userProfile.Surname = model.UserProfile.Surname;
+                userProfile.Language = (int)model.UserProfile.Language;
+                userProfile.Phone = model.UserProfile.Phone;
 
-            //company
-            userProfile.IndustryFamilyType = (int) model.UserProfile.CompanyProfile.IndustryFamilyType;
-            userProfile.IndustryType = model.UserProfile.CompanyProfile.IndustryType;
-            userProfile.CompanyName = model.UserProfile.CompanyProfile.CompanyName;
-            userProfile.Street = model.UserProfile.CompanyProfile.Street;
-            userProfile.StreetNumber = model.UserProfile.CompanyProfile.StreetNumber;
-            userProfile.ZipCode = model.UserProfile.CompanyProfile.ZipCode;
-            userProfile.City = model.UserProfile.CompanyProfile.City;
-            userProfile.Country = model.UserProfile.CompanyProfile.Country;
+                //company
+                userProfile.IndustryFamilyType = (int)model.UserProfile.CompanyProfile.IndustryFamilyType;
+                userProfile.IndustryType = model.UserProfile.CompanyProfile.IndustryType;
+                userProfile.CompanyName = model.UserProfile.CompanyProfile.CompanyName;
+                userProfile.Street = model.UserProfile.CompanyProfile.Street;
+                userProfile.StreetNumber = model.UserProfile.CompanyProfile.StreetNumber;
+                userProfile.ZipCode = model.UserProfile.CompanyProfile.ZipCode;
+                userProfile.City = model.UserProfile.CompanyProfile.City;
+                userProfile.Country = model.UserProfile.CompanyProfile.Country;
 
-            userProfile.SecretQuestion = model.UserProfile.SecretQuestion;
-            userProfile.SecretAnswer = model.UserProfile.SecretAnswer.GetHashCode().ToString();
-            userProfile.TermsAccepted = model.UserProfile.TermsAccepted;
-            userProfile.ConfirmationHash = UserManager.PasswordHasher.HashPassword(Guid.NewGuid().ToString("D"));
+                userProfile.SecretQuestion = model.UserProfile.SecretQuestion;
+                userProfile.SecretAnswer = model.UserProfile.SecretAnswer.GetHashCode().ToString();
+                userProfile.TermsAccepted = model.UserProfile.TermsAccepted;
+                userProfile.ConfirmationHash = UserManager.PasswordHasher.HashPassword(Guid.NewGuid().ToString("D"));
 
-            _userService.CreateProfile(userProfile);
-            _userService.AddRoleToUser(user.Id, "customer");
+                _userService.CreateProfile(userProfile);
+            }
+            _userService.AddRoleToUser(user.Id, roleName);
 
             return Ok();
         }
-
-        #region IdentityCustomization
         [AllowAnonymous]
         [HttpPost]
         [Route("ConfirmUser")]
