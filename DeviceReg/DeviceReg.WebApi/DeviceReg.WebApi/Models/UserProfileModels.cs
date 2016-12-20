@@ -20,13 +20,13 @@ namespace DeviceReg.WebApi.Models
         public bool TermsAccepted { get; set; }
     }
 
-    public class UserProfileUserViewBindingModel
+    public class UserProfileUserViewDto
     {
-        public UserProfileUserViewBindingModel()
+        public UserProfileUserViewDto()
         {
 
         }
-        public UserProfileUserViewBindingModel(UserProfile userProfile)
+        public UserProfileUserViewDto(UserProfile userProfile)
         {
             Gender = userProfile.Gender;
             Prename = userProfile.Prename;

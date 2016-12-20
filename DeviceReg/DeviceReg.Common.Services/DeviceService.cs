@@ -2,7 +2,6 @@
 using DeviceReg.Repositories;
 using DeviceReg.Services;
 using DeviceReg.Services.Abstract;
-using DeviceReg.WebApi.Models.DTOs;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -44,41 +43,20 @@ namespace DeviceReg.Common.Services
             return false;
         }
 
-        public IEnumerable<DeviceDTO> GetAllByUserId(string userId)
+        public IEnumerable<Device> GetAllByUserId(string userId)
         {
             IsValidUser(userId);
             
             var devices = UnitOfWork.Devices.GetAllByUserId(userId);
-            var deviceDTOs = from d in devices 
-                             select new DeviceDTO()
-                             {
-                                 Id = d.Id,
-                                 Name = d.Name,
-                                 Description = d.Description,
-                                 Serialnumber = d.Serialnumber,
-                                 RegularMaintenance = d.RegularMaintenance,
-                                 UserId = d.UserId,
-                                 TypeOfDeviceId = d.TypeOfDeviceId,
-                                 MediumId = d.MediumId,
-                                 Labels = from t in d.Tags
-                                          select new LabelDTO
-                                          {
-                                              Id = t.Id,
-                                              Name = t.Name,
-                                              Description = t.Description
-                                          },
-                                 Timestamp = d.Timestamp
-                             };
-
-            return deviceDTOs;
+            return devices;
         }
 
-        public IEnumerable<DeviceDTO> GetAllActiveByUserId(string userId)
+        public IEnumerable<Device> GetAllActiveByUserId(string userId)
         {
            return GetAllByUserId(userId).Where(d => d.Timestamp.Deleted == null);
         }
 
-        public IEnumerable<DeviceDTO> GetAllDeletedByUserId(string userId)
+        public IEnumerable<Device> GetAllDeletedByUserId(string userId)
         {
             return GetAllByUserId(userId).Where(d => d.Timestamp.Deleted != null);
         }

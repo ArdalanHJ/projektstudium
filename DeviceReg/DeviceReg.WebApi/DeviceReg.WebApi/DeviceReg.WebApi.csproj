@@ -247,14 +247,15 @@
     </Compile>
     <Compile Include="Models\AccountBindingModels.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
-    <Compile Include="Models\AdminBindingModels.cs" />
+    <Compile Include="Models\AdminModels.cs" />
     <Compile Include="Models\CompanyProfile.cs" />
-    <Compile Include="Models\DeviceModel.cs" />
+    <Compile Include="Models\DeviceModels.cs" />
     <Compile Include="Models\GenderType.cs" />
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\IndustryFamilyType.cs" />
+    <Compile Include="Models\LabelModels.cs" />
     <Compile Include="Models\LanguageType.cs" />
-    <Compile Include="Models\UserProfileBindingModels.cs" />
+    <Compile Include="Models\UserProfileModels.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Providers\ApplicationOAuthProvider.cs" />
     <Compile Include="Results\ChallengeResult.cs" />

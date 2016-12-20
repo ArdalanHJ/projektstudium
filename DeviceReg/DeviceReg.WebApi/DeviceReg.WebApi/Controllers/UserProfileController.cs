@@ -44,7 +44,7 @@ namespace DeviceReg.WebApi.Controllers
             return ControllerUtility.Guard(() =>
             {
                 var currentUserId = User.Identity.GetUserId();
-                var userProfile = new UserProfileUserViewBindingModel(_userProfileService.GetByUserId(currentUserId));
+                var userProfile = new UserProfileUserViewDto(_userProfileService.GetByUserId(currentUserId));
                 return Ok(userProfile);
             });
         }
@@ -55,7 +55,7 @@ namespace DeviceReg.WebApi.Controllers
         /// <returns></returns>
         [HttpPut]
         [Route()]
-        public IHttpActionResult UpdateUser(UserProfileUserViewBindingModel userProfileModel)
+        public IHttpActionResult UpdateUser(UserProfileUserViewDto userProfileModel)
         {
             return ControllerUtility.Guard(() =>
             {

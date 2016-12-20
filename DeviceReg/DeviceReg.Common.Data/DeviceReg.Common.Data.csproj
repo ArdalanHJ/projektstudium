@@ -72,8 +72,6 @@
     <Compile Include="Models\ComplexTypes\Timestamp.cs" />
     <Compile Include="Models\Devices.cs" />
     <Compile Include="Interfaces\IEntity.cs" />
-    <Compile Include="Models\DTOs\DeviceDTO.cs" />
-    <Compile Include="Models\DTOs\LabelDTO.cs" />
     <Compile Include="Models\Medium.cs" />
     <Compile Include="Models\Role.cs" />
     <Compile Include="Models\Tag.cs" />

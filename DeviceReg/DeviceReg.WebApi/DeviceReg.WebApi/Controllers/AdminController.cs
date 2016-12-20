@@ -3,9 +3,9 @@ using DeviceReg.Common.Services;
 using DeviceReg.Services;
 using DeviceReg.WebApi.Controllers.Base;
 using DeviceReg.WebApi.Models;
-using DeviceReg.WebApi.Models.DTOs;
 using DeviceReg.WebApi.Utility;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
@@ -127,8 +127,9 @@ namespace DeviceReg.WebApi.Controllers
         {
             return ControllerUtility.Guard(() =>
             {
-                IEnumerable<DeviceDTO> devices = _deviceService.GetAllActiveByUserId(userId);
-                return Ok(devices);
+                IEnumerable<Device> devices = _deviceService.GetAllActiveByUserId(userId);
+                IEnumerable<DeviceDto> deviceDtos = devices.Select(d => new DeviceDto(d));
+                return Ok(deviceDtos);
             });
         }
 
@@ -143,8 +144,9 @@ namespace DeviceReg.WebApi.Controllers
         {
             return ControllerUtility.Guard(() =>
             {
-                IEnumerable<DeviceDTO> devices = _deviceService.GetAllByUserId(userId);
-                return Ok(devices);
+                IEnumerable<Device> devices = _deviceService.GetAllByUserId(userId);
+                IEnumerable<DeviceDto> deviceDtos = devices.Select(d => new DeviceDto(d));
+                return Ok(deviceDtos);
             });
         }
 
@@ -159,8 +161,9 @@ namespace DeviceReg.WebApi.Controllers
         {
             return ControllerUtility.Guard(() =>
             {
-                IEnumerable<DeviceDTO> devices = _deviceService.GetAllDeletedByUserId(userId);
-                return Ok(devices);
+                IEnumerable<Device> devices = _deviceService.GetAllDeletedByUserId(userId);
+                IEnumerable<DeviceDto> deviceDtos = devices.Select(d => new DeviceDto(d));
+                return Ok(deviceDtos);
             });
         }
        
