@@ -2,6 +2,7 @@
 using DeviceReg.Services;
 using DeviceReg.WebApi.Controllers.Base;
 using DeviceReg.WebApi.Models;
+using DeviceReg.WebApi.Utility;
 using Microsoft.AspNet.Identity;
 using System;
 using System.Collections.Generic;
@@ -16,11 +17,11 @@ namespace DeviceReg.WebApi.Controllers
     /// <summary>
     /// Controller for UserProfile
     /// </summary>
-    [Authorize(Roles = "Customer")]
-    [RoutePrefix("api/user")]
+    [Authorize(Roles = "customer")]
+    [RoutePrefix("api/user/profile")]
     public class UserProfileController : ApiControllerBase
     {
-
+        private UserProfileService _userProfileService;
 
         /// <summary>
         /// Initialize Services
@@ -29,7 +30,8 @@ namespace DeviceReg.WebApi.Controllers
         protected override void Initialize(HttpControllerContext controllerContext)
         {
             base.Initialize(controllerContext);
-
+            
+            _userProfileService = new UserProfileService(UnitOfWork);
         }
         /// <summary>
         /// Returns User profile of the current User
@@ -39,7 +41,12 @@ namespace DeviceReg.WebApi.Controllers
         [Route()]
         public IHttpActionResult GetUserProfile()
         {
-            return NotFound();
+            return ControllerUtility.Guard(() =>
+            {
+                var currentUserId = User.Identity.GetUserId();
+                var userProfile = new UserProfileUserViewBindingModel(_userProfileService.GetByUserId(currentUserId));
+                return Ok(userProfile);
+            });
         }
         /// <summary>
         /// Update Profile of the current User
@@ -48,9 +55,31 @@ namespace DeviceReg.WebApi.Controllers
         /// <returns></returns>
         [HttpPut]
         [Route()]
-        public IHttpActionResult UpdateUser()
+        public IHttpActionResult UpdateUser(UserProfileUserViewBindingModel userProfileModel)
         {
-            return NotFound();
+            return ControllerUtility.Guard(() =>
+            {
+                var currentUserId = User.Identity.GetUserId();
+                var currentUserProfile = _userProfileService.GetByUserId(currentUserId);
+                currentUserProfile.Gender = (int) userProfileModel.Gender;
+                currentUserProfile.Prename = userProfileModel.Prename;
+                currentUserProfile.Surname = userProfileModel.Surname;
+                currentUserProfile.Language = (int) userProfileModel.Language;
+                currentUserProfile.Phone = userProfileModel.Phone;
+
+                currentUserProfile.IndustryFamilyType = (int) userProfileModel.IndustryFamilyType;
+                currentUserProfile.IndustryType = userProfileModel.IndustryType;
+                currentUserProfile.CompanyName = userProfileModel.CompanyName;
+                currentUserProfile.Street = userProfileModel.Street;
+                currentUserProfile.StreetNumber = userProfileModel.StreetNumber;
+                currentUserProfile.ZipCode = userProfileModel.ZipCode;
+                currentUserProfile.City = userProfileModel.City;
+                currentUserProfile.Country = userProfileModel.Country;
+
+                _userProfileService.Update(currentUserProfile);
+
+                return Ok();
+            });
         }
         /// <summary>
         /// Request Delete of user

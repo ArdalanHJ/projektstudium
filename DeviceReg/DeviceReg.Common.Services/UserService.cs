@@ -71,7 +71,7 @@ namespace DeviceReg.Services
                 throw new Exception("User is locked out.");
             }
 
-            var profile = UnitOfWork.Profiles.GetProfileByUserId(user.Id);
+            var profile = UnitOfWork.Profiles.GetByUserId(user.Id);
 
             if(profile == null)
             {

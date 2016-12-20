@@ -19,7 +19,7 @@ namespace DeviceReg.Repositories
             return DbSet.FirstOrDefault(up => up.ConfirmationHash == confirmationHash);
         }
 
-        public UserProfile GetProfileByUserId(string userId)
+        public UserProfile GetByUserId(string userId)
         {
             return DbSet.FirstOrDefault(up => up.UserId == userId);
         }
