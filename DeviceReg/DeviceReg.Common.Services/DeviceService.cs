@@ -2,6 +2,7 @@
 using DeviceReg.Repositories;
 using DeviceReg.Services;
 using DeviceReg.Services.Abstract;
+using DeviceReg.Services.Utility;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,13 +21,9 @@ namespace DeviceReg.Common.Services
 
         public bool Add(Device device)
         {
-
-            if (IsValidDevice(device))
-            {
-                UnitOfWork.Devices.Add(device);
-                UnitOfWork.SaveChanges();
-            }
-
+            CheckDevice(device);
+            UnitOfWork.Devices.Add(device);
+            UnitOfWork.SaveChanges();
             return true;
         }
 
@@ -45,8 +42,7 @@ namespace DeviceReg.Common.Services
 
         public IEnumerable<Device> GetAllByUserId(string userId)
         {
-            IsValidUser(userId);
-            
+            ErrorHandler.Check(UnitOfWork.Users.GetUserById(userId), ErrorHandler.UserNotFound);
             var devices = UnitOfWork.Devices.GetAllByUserId(userId);
             return devices;
         }
@@ -63,74 +59,37 @@ namespace DeviceReg.Common.Services
 
         public Device GetById(int deviceId)
         {
-            var device = UnitOfWork.Devices.GetById(deviceId);
-            if(device == null)
-            {
-                throw new Exception("Device not found.");
-            }
-
+            var device = ErrorHandler.Check(UnitOfWork.Devices.GetById(deviceId), ErrorHandler.DeviceNotFound);
             return device;
         }
 
         public bool Update(Device device)
         {
-            if (IsValidDevice(device))
-            {
-                UnitOfWork.Devices.Update(device);
-                UnitOfWork.SaveChanges();
-            }
-
+            CheckDevice(device);
+            UnitOfWork.Devices.Update(device);
+            UnitOfWork.SaveChanges();
             return true;
         }
 
         public bool DeleteAllByUserId(string userId)
         {
-                IsValidUser(userId);
+            ErrorHandler.Check(UnitOfWork.Users.GetUserById(userId), ErrorHandler.UserNotFound);
+            var devices = UnitOfWork.Devices.GetAllByUserId(userId);
 
-                var devices = UnitOfWork.Devices.GetAllByUserId(userId);
+            foreach (Device device in devices)
+            {
+                UnitOfWork.Devices.Delete(device);
+            }
 
-                foreach (Device device in devices)
-                {
-                    UnitOfWork.Devices.Delete(device);
-                }
-
-                return UnitOfWork.SaveChanges() > 0;
+            return UnitOfWork.SaveChanges() > 0;
         }
 
-        private bool IsValidUser(string userId)
+
+        private void CheckDevice(Device device)
         {
-            var user = UnitOfWork.Users.GetUserById(userId);
-
-            if (user == null)
-            {
-                throw new Exception("User not found.");
-            }
-
-            return true;
-        }
-
-        private bool IsValidDevice(Device device)
-        {
-            if (device == null)
-            {
-                throw new Exception("Invalid device");
-            }
-
-            var medium = UnitOfWork.Media.GetById(device.MediumId);
-
-            if (medium == null)
-            {
-                throw new Exception("Medium not found");
-            }
-
-            var typeOfDevice = UnitOfWork.Types.GetById(device.TypeOfDeviceId);
-
-            if (typeOfDevice == null)
-            {
-                throw new Exception("Type of device not found");
-            }
-
-            return true;
+            ErrorHandler.Check(device, ErrorHandler.InvalidDevice);
+            ErrorHandler.Check(UnitOfWork.Media.GetById(device.MediumId), ErrorHandler.MediumNotFound);
+            ErrorHandler.Check(UnitOfWork.Types.GetById(device.TypeOfDeviceId), ErrorHandler.TypeOfDeviceNotFound);
         }
     }
 }

@@ -21,6 +21,7 @@ using DeviceReg.Common.Data.Models;
 using DeviceReg.Services;
 using System.Net;
 using System.Web.Http.Controllers;
+using DeviceReg.WebApi.Utility;
 
 namespace DeviceReg.WebApi.Controllers
 {
@@ -420,55 +421,27 @@ namespace DeviceReg.WebApi.Controllers
         [AllowAnonymous]
         [HttpPost]
         [Route("ConfirmUser")]
-        public HttpResponseMessage ConfirmUserEmail(EmailConfirmationBindingModel model)
+        public IHttpActionResult ConfirmUserEmail(EmailConfirmationBindingModel model)
         {
-            var returncode = HttpStatusCode.BadRequest;
-            try
+            return ControllerUtility.Guard(() =>
             {
-                var success = _userService.ConfirmUser(model.ConfirmationHash);
-                if (success)
-                {
-                    returncode = HttpStatusCode.Accepted;
-                }
-            }
-            catch (Exception ex)
-            {
-
-                var resp = new HttpResponseMessage(returncode)
-                {
-                    ReasonPhrase = ex.Message
-                };
-                 throw new HttpResponseException(resp);
-            }
-            return new HttpResponseMessage(returncode);
+                _userService.ConfirmUser(model.ConfirmationHash);
+                return Ok();
+            });
         }
 
         [AllowAnonymous]
         [HttpPost]
         [Route("ResetPassword")]
-        public HttpResponseMessage ResetPassword(ResetPasswordBindingModel model)
+        public IHttpActionResult ResetPassword(ResetPasswordBindingModel model)
         {
-            var returncode = HttpStatusCode.BadRequest;
-            try
+            return ControllerUtility.Guard(() =>
             {
                 var secretAnswerHash = model.SecretAnswer.GetHashCode().ToString();
                 var newConfirmationHash = UserManager.PasswordHasher.HashPassword(Guid.NewGuid().ToString("D"));
-                var success = _userService.ResetPassword(model.UserEmail, secretAnswerHash, newConfirmationHash);
-                if (success)
-                {
-                    returncode = HttpStatusCode.Accepted;
-                }
-            }
-            catch (Exception ex)
-            {
-
-                var resp = new HttpResponseMessage(returncode)
-                {
-                    ReasonPhrase = ex.Message
-                };
-                throw new HttpResponseException(resp);
-            }
-            return new HttpResponseMessage(returncode);
+                _userService.ResetPassword(model.UserEmail, secretAnswerHash, newConfirmationHash);
+                return Ok();
+            });
         }
 
         #endregion
