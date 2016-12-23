@@ -240,3 +240,4 @@ ModelManifest.xml
 
 # FAKE - F# Make
 .fake/
+/DeviceReg/DeviceReg.WebApi/DeviceReg.WebApi/App_Data
