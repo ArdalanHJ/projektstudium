@@ -36,6 +36,7 @@ namespace DeviceReg.WebApi.Controllers
         [Route()]
         public IHttpActionResult Post([FromBody] DeviceModel model)
         {
+            if (!ModelState.IsValid) return BadRequest(ModelState);
             return ControllerUtility.Guard(() =>
             {
                 var device = new Device()

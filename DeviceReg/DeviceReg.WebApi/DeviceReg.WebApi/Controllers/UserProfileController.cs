@@ -57,6 +57,7 @@ namespace DeviceReg.WebApi.Controllers
         [Route()]
         public IHttpActionResult UpdateUser(UserProfileUserViewDto userProfileModel)
         {
+            if (!ModelState.IsValid) return BadRequest(ModelState);
             return ControllerUtility.Guard(() =>
             {
                 var currentUserId = User.Identity.GetUserId();

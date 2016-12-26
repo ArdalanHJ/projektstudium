@@ -66,6 +66,7 @@ namespace DeviceReg.WebApi.Controllers
         [Route("device")]
         public IHttpActionResult UpdateDeviceForUser(UpdateDeviceBindingModel model)
         {
+            if (!ModelState.IsValid) return BadRequest(ModelState);
             return ControllerUtility.Guard(() =>
             {
                 var device = _deviceService.GetById(model.DeviceId);
