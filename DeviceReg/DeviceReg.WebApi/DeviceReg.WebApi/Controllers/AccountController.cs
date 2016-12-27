@@ -375,7 +375,7 @@ namespace DeviceReg.WebApi.Controllers
                 return BadRequest(ModelState);
             }
 
-            var user = new ApplicationUser() { UserName = model.Email, Email = model.Email };
+            var user = new ApplicationUser() { UserName = model.User, Email = model.User };
 
             user.EmailConfirmed = confirm;
 
@@ -386,30 +386,29 @@ namespace DeviceReg.WebApi.Controllers
                 return GetErrorResult(result);
             }
 
-            if (model.UserProfile != null)
+            if (model != null)
             {
                 var userProfile = new UserProfile();
 
                 userProfile.UserId = user.Id;
-                userProfile.Gender = (int)model.UserProfile.Gender;
-                userProfile.Prename = model.UserProfile.Prename;
-                userProfile.Surname = model.UserProfile.Surname;
-                userProfile.Language = (int)model.UserProfile.Language;
-                userProfile.Phone = model.UserProfile.Phone;
+                userProfile.Gender = (int)model.Gender;
+                userProfile.Prename = model.FirstName;
+                userProfile.Surname = model.LastName;
+                userProfile.Language = (int)model.Language;
+                userProfile.Phone = model.Phone;
 
                 //company
-                userProfile.IndustryFamilyType = (int)model.UserProfile.CompanyProfile.IndustryFamilyType;
-                userProfile.IndustryType = model.UserProfile.CompanyProfile.IndustryType;
-                userProfile.CompanyName = model.UserProfile.CompanyProfile.CompanyName;
-                userProfile.Street = model.UserProfile.CompanyProfile.Street;
-                userProfile.StreetNumber = model.UserProfile.CompanyProfile.StreetNumber;
-                userProfile.ZipCode = model.UserProfile.CompanyProfile.ZipCode;
-                userProfile.City = model.UserProfile.CompanyProfile.City;
-                userProfile.Country = model.UserProfile.CompanyProfile.Country;
+                userProfile.IndustryFamilyType = (int)model.Industry_Family;
+                userProfile.IndustryType = model.Industry_Type;
+                userProfile.CompanyName = model.Company;
+                userProfile.Street = model.Street;
+                userProfile.StreetNumber = model.Street;
+                userProfile.ZipCode = model.Zip;
+                userProfile.City = model.City;
+                userProfile.Country = model.Country;
 
-                userProfile.SecretQuestion = model.UserProfile.SecretQuestion;
-                userProfile.SecretAnswer = model.UserProfile.SecretAnswer.GetHashCode().ToString();
-                userProfile.TermsAccepted = model.UserProfile.TermsAccepted;
+                userProfile.SecretQuestion = model.Question;
+                userProfile.SecretAnswer = model.Answer.GetHashCode().ToString();
                 userProfile.ConfirmationHash = UserManager.PasswordHasher.HashPassword(Guid.NewGuid().ToString("D"));
 
                 _userService.CreateProfile(userProfile);
