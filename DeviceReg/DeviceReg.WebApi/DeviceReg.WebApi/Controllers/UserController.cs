@@ -26,14 +26,13 @@ using DeviceReg.WebApi.Utility;
 namespace DeviceReg.WebApi.Controllers
 {
     [Authorize]
-    [RoutePrefix("api/Account")]
-    public class AccountController : ApiControllerBase
+    public class UserController : ApiControllerBase
     {
         private const string LocalLoginProvider = "Local";
         private ApplicationUserManager _userManager;
         private UserService _userService;
 
-        public AccountController()
+        public UserController()
         {
         }
 
@@ -43,7 +42,7 @@ namespace DeviceReg.WebApi.Controllers
             _userService = new UserService(UnitOfWork);
         }
 
-        public AccountController(ApplicationUserManager userManager,
+        public UserController(ApplicationUserManager userManager,
             ISecureDataFormat<AuthenticationTicket> accessTokenFormat)
         {
             UserManager = userManager;
@@ -337,7 +336,8 @@ namespace DeviceReg.WebApi.Controllers
         /// <param name="model"></param>
         /// <returns></returns>
         [AllowAnonymous]
-        [Route("Register")]
+        [Route("user")]
+        [HttpPost]
         public async Task<IHttpActionResult> RegisterCustomer(RegisterBindingModel model)
         {
            return await RegisterWithRole(model, "customer", false);
