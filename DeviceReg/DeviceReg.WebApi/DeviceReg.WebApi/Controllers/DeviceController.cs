@@ -102,7 +102,7 @@ namespace DeviceReg.WebApi.Controllers
                      return Ok(deviceDtos);
                 }
 
-                return NotFound();
+                return Ok(new List<DeviceDto>());
                
             });
         }
