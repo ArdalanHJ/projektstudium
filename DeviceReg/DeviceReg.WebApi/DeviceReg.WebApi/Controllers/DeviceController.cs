@@ -17,12 +17,18 @@ using System.Web.Http.Controllers;
 
 namespace DeviceReg.WebApi.Controllers
 {
+    /// <summary>
+    /// Controller for customer access to devices
+    /// </summary>
     [Authorize(Roles = "customer")]
     [RoutePrefix("api/user/devices")]
     public class DeviceController : ApiControllerBase
     {
         private DeviceService _deviceService;
-        
+        /// <summary>
+        /// Initialize Controller
+        /// </summary>
+        /// <param name="controllerContext"></param>
         protected override void Initialize(HttpControllerContext controllerContext)
         {
             base.Initialize(controllerContext);
