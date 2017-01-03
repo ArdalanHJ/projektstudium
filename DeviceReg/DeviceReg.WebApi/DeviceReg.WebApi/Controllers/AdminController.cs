@@ -87,7 +87,7 @@ namespace DeviceReg.WebApi.Controllers
         /// <summary>
         /// Delets a specific device
         /// </summary>
-        /// <param name="model"></param>
+        /// <param name="deviceId"></param>
         /// <returns></returns>
         [HttpDelete]
         [Route("device/{deviceId}")]
@@ -103,7 +103,7 @@ namespace DeviceReg.WebApi.Controllers
         /// <summary>
         /// Deletes all devices for a specific user
         /// </summary>
-        /// <param name="model"></param>
+        /// <param name="userId"></param>
         /// <returns></returns>
         [HttpDelete]
         [Route("devices/{userId}")]
@@ -120,7 +120,7 @@ namespace DeviceReg.WebApi.Controllers
         /// <summary>
         /// Get all active (non deleted) devices from a specific user.
         /// </summary>
-        /// <param name="model"></param>
+        /// <param name="userId"></param>
         /// <returns></returns>
         [HttpGet]
         [Route("devices/{userId}")]
@@ -137,7 +137,7 @@ namespace DeviceReg.WebApi.Controllers
         /// <summary>
         /// Get all devices (deleted/non deleted) from a specific user.
         /// </summary>
-        /// <param name="model"></param>
+        /// <param name="userId"></param>
         /// <returns></returns>
         [HttpGet]
         [Route("devices/{userId}/all")]
@@ -154,7 +154,7 @@ namespace DeviceReg.WebApi.Controllers
         /// <summary>
         /// Get all deleted devices from a specific user.
         /// </summary>
-        /// <param name="model"></param>
+        /// <param name="userId"></param>
         /// <returns></returns>
         [HttpGet]
         [Route("devices/{userId}/deleted")]

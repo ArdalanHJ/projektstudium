@@ -84,6 +84,11 @@ namespace DeviceReg.Common.Services
             return UnitOfWork.SaveChanges() > 0;
         }
 
+        public bool DeviceBelongsToUser(int id, string v)
+        {
+            var device = GetActiveByUserId(v, id);
+            return device != null;
+        }
 
         private void CheckDevice(Device device)
         {

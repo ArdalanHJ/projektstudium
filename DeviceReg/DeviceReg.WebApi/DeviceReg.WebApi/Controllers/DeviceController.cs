@@ -53,11 +53,6 @@ namespace DeviceReg.WebApi.Controllers
                 _deviceService.Add(device);
                 return base.Ok();
 
-                //var createdDevice = _deviceService.GetAllByUserId(User.Identity.GetUserId())
-                  //                     .Where(x => x.Serialnumber.Equals(device.Serialnumber))
-                    //                   .First();
-
-                //return Created(Request.RequestUri.AbsolutePath + createdDevice.Id, createdDevice);
             });
         }
         /// <summary>
@@ -70,9 +65,11 @@ namespace DeviceReg.WebApi.Controllers
         {
             try
             {
-                var devices = _deviceService.GetAllActiveByUserId(User.Identity.GetUserId());
-                var device = devices.Where(x => x.Id.Equals(id)).First();
-                _deviceService.Delete(id);
+                if(_deviceService.DeviceBelongsToUser(id, User.Identity.GetUserId()))
+                {
+                    _deviceService.Delete(id);
+                }
+
                 return Ok();
             }
             catch (Exception)
@@ -81,7 +78,7 @@ namespace DeviceReg.WebApi.Controllers
             }
 
         }
-
+        /// <summary>
         /// Get All Devices of the current User
         /// </summary>
         /// <returns></returns>
