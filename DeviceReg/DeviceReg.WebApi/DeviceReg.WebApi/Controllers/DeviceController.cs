@@ -126,6 +126,23 @@ namespace DeviceReg.WebApi.Controllers
                 }
             });
         }
-
+        /// <summary>
+        /// Update Device 
+        /// </summary>
+        /// <returns></returns>
+        [HttpPut]
+        [Route("{id}")]
+        public IHttpActionResult Update(DeviceModel model, int id)
+        {
+            return ControllerUtility.Guard(() => {
+                var device = _deviceService.GetActiveByUserId(User.Identity.GetUserId(), id);
+                device.Name = model.Name;
+                device.Description = model.Description;
+                device.Serialnumber = model.SerialNumber;
+                device.RegularMaintenance = model.RegularMaintenance;
+                _deviceService.Update(device);
+                return Ok();
+            });
+        }
     }
 }
