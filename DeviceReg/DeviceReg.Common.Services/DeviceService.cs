@@ -84,12 +84,22 @@ namespace DeviceReg.Common.Services
             return UnitOfWork.SaveChanges() > 0;
         }
 
+        public bool DeviceBelongsToUser(int id, string v)
+        {
+            var device = GetActiveByUserId(v, id);
+            return device != null;
+        }
 
         private void CheckDevice(Device device)
         {
             ErrorHandler.Check(device, ErrorHandler.InvalidDevice);
             ErrorHandler.Check(UnitOfWork.Media.GetById(device.MediumId), ErrorHandler.MediumNotFound);
             ErrorHandler.Check(UnitOfWork.Types.GetById(device.TypeOfDeviceId), ErrorHandler.TypeOfDeviceNotFound);
+        }
+
+        public Device GetActiveByUserId(string userId, int id)
+        {
+            return GetAllActiveByUserId(userId).Where(x => x.Id.Equals(id)).First();
         }
     }
 }

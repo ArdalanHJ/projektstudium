@@ -379,6 +379,8 @@ namespace DeviceReg.WebApi.Controllers
 
             user.EmailConfirmed = confirm;
 
+           
+
             IdentityResult result = await UserManager.CreateAsync(user, model.Password);
 
             if (!result.Succeeded)
@@ -395,6 +397,7 @@ namespace DeviceReg.WebApi.Controllers
                 userProfile.Prename = model.FirstName;
                 userProfile.Surname = model.LastName;
                 userProfile.Language = (int)model.Language;
+                userProfile.PreferredLanguage = (int)model.Preferred_Language;
                 userProfile.Phone = model.Phone;
 
                 //company
@@ -409,22 +412,25 @@ namespace DeviceReg.WebApi.Controllers
 
                 userProfile.SecretQuestion = model.Question;
                 userProfile.SecretAnswer = model.Answer.GetHashCode().ToString();
-                userProfile.ConfirmationHash = UserManager.PasswordHasher.HashPassword(Guid.NewGuid().ToString("D"));
+                userProfile.ConfirmationHash = Guid.NewGuid().ToString("N");
 
                 _userService.CreateProfile(userProfile);
+
+                if (!confirm) ControllerUtility.SendMail("deviceregsender@gmail.com", "DeviceReg E-Mail Confirmation",
+                     HttpContext.Current.Request.Url.GetLeftPart(UriPartial.Authority) + "/confirmuser?confirmationhash=" + userProfile.ConfirmationHash);
             }
             _userService.AddRoleToUser(user.Id, roleName);
-
+            
             return Ok();
         }
         [AllowAnonymous]
-        [HttpPost]
+        [HttpGet]
         [Route("ConfirmUser")]
-        public IHttpActionResult ConfirmUserEmail(EmailConfirmationBindingModel model)
+        public IHttpActionResult ConfirmUserEmail(string confirmationHash)
         {
             return ControllerUtility.Guard(() =>
             {
-                _userService.ConfirmUser(model.ConfirmationHash);
+                _userService.ConfirmUser(confirmationHash);
                 return Ok();
             });
         }
@@ -437,7 +443,7 @@ namespace DeviceReg.WebApi.Controllers
             return ControllerUtility.Guard(() =>
             {
                 var secretAnswerHash = model.SecretAnswer.GetHashCode().ToString();
-                var newConfirmationHash = UserManager.PasswordHasher.HashPassword(Guid.NewGuid().ToString("D"));
+                var newConfirmationHash = Guid.NewGuid().ToString("N");
                 _userService.ResetPassword(model.UserEmail, secretAnswerHash, newConfirmationHash);
                 return Ok();
             });

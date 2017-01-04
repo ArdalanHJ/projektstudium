@@ -78,7 +78,7 @@ namespace DeviceReg.WebApi.Models
         public string Question { get; set; }
 
         public string Answer { get; set; }
-
+        public LanguageType Preferred_Language { get; internal set; }
     }
 
     public class RegisterExternalBindingModel

@@ -2,6 +2,7 @@
 using DeviceReg.Common.Data.Models.ComplexTypes;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web;
 
@@ -10,6 +11,8 @@ namespace DeviceReg.WebApi.Models
     public class DeviceModel
     {
         public string Name { get; set; }
+
+        [RegularExpression("^^([1-9]|[BCDJN])([0-9]|[BCDJN])([1-9]|[BCDJN])([1-9]|[AB])([0-9]|[A-K])([0-9]{4})$", ErrorMessage = "Invalid serial number.")]
         public string SerialNumber { get; set; }
 
         public string Description { get; set; }

@@ -17,12 +17,18 @@ using System.Web.Http.Controllers;
 
 namespace DeviceReg.WebApi.Controllers
 {
+    /// <summary>
+    /// Controller for customer access to devices
+    /// </summary>
     [Authorize(Roles = "customer")]
     [RoutePrefix("api/user/devices")]
     public class DeviceController : ApiControllerBase
     {
         private DeviceService _deviceService;
-        
+        /// <summary>
+        /// Initialize Controller
+        /// </summary>
+        /// <param name="controllerContext"></param>
         protected override void Initialize(HttpControllerContext controllerContext)
         {
             base.Initialize(controllerContext);
@@ -53,11 +59,6 @@ namespace DeviceReg.WebApi.Controllers
                 _deviceService.Add(device);
                 return base.Ok();
 
-                //var createdDevice = _deviceService.GetAllByUserId(User.Identity.GetUserId())
-                  //                     .Where(x => x.Serialnumber.Equals(device.Serialnumber))
-                    //                   .First();
-
-                //return Created(Request.RequestUri.AbsolutePath + createdDevice.Id, createdDevice);
             });
         }
         /// <summary>
@@ -70,9 +71,11 @@ namespace DeviceReg.WebApi.Controllers
         {
             try
             {
-                var devices = _deviceService.GetAllActiveByUserId(User.Identity.GetUserId());
-                var device = devices.Where(x => x.Id.Equals(id)).First();
-                _deviceService.Delete(id);
+                if(_deviceService.DeviceBelongsToUser(id, User.Identity.GetUserId()))
+                {
+                    _deviceService.Delete(id);
+                }
+
                 return Ok();
             }
             catch (Exception)
@@ -81,7 +84,7 @@ namespace DeviceReg.WebApi.Controllers
             }
 
         }
-
+        /// <summary>
         /// Get All Devices of the current User
         /// </summary>
         /// <returns></returns>
@@ -99,7 +102,7 @@ namespace DeviceReg.WebApi.Controllers
                      return Ok(deviceDtos);
                 }
 
-                return NotFound();
+                return Ok(new List<DeviceDto>());
                
             });
         }
@@ -126,6 +129,23 @@ namespace DeviceReg.WebApi.Controllers
                 }
             });
         }
-
+        /// <summary>
+        /// Update Device 
+        /// </summary>
+        /// <returns></returns>
+        [HttpPut]
+        [Route("{id}")]
+        public IHttpActionResult Update(DeviceModel model, int id)
+        {
+            return ControllerUtility.Guard(() => {
+                var device = _deviceService.GetActiveByUserId(User.Identity.GetUserId(), id);
+                device.Name = model.Name;
+                device.Description = model.Description;
+                device.Serialnumber = model.SerialNumber;
+                device.RegularMaintenance = model.RegularMaintenance;
+                _deviceService.Update(device);
+                return Ok();
+            });
+        }
     }
 }
