@@ -26,14 +26,13 @@ using DeviceReg.WebApi.Utility;
 namespace DeviceReg.WebApi.Controllers
 {
     [Authorize]
-    [RoutePrefix("api/Account")]
-    public class AccountController : ApiControllerBase
+    public class UserController : ApiControllerBase
     {
         private const string LocalLoginProvider = "Local";
         private ApplicationUserManager _userManager;
         private UserService _userService;
 
-        public AccountController()
+        public UserController()
         {
         }
 
@@ -43,7 +42,7 @@ namespace DeviceReg.WebApi.Controllers
             _userService = new UserService(UnitOfWork);
         }
 
-        public AccountController(ApplicationUserManager userManager,
+        public UserController(ApplicationUserManager userManager,
             ISecureDataFormat<AuthenticationTicket> accessTokenFormat)
         {
             UserManager = userManager;
@@ -337,7 +336,8 @@ namespace DeviceReg.WebApi.Controllers
         /// <param name="model"></param>
         /// <returns></returns>
         [AllowAnonymous]
-        [Route("Register")]
+        [Route("user")]
+        [HttpPost]
         public async Task<IHttpActionResult> RegisterCustomer(RegisterBindingModel model)
         {
            return await RegisterWithRole(model, "customer", false);
@@ -375,7 +375,7 @@ namespace DeviceReg.WebApi.Controllers
                 return BadRequest(ModelState);
             }
 
-            var user = new ApplicationUser() { UserName = model.Email, Email = model.Email };
+            var user = new ApplicationUser() { UserName = model.User, Email = model.User };
 
             user.EmailConfirmed = confirm;
 
@@ -388,36 +388,39 @@ namespace DeviceReg.WebApi.Controllers
                 return GetErrorResult(result);
             }
 
-            if (model.UserProfile != null)
+            if (model != null)
             {
                 var userProfile = new UserProfile();
 
                 userProfile.UserId = user.Id;
-                userProfile.Gender = (int)model.UserProfile.Gender;
-                userProfile.Prename = model.UserProfile.Prename;
-                userProfile.Surname = model.UserProfile.Surname;
-                userProfile.Language = (int)model.UserProfile.Language;
-                userProfile.Phone = model.UserProfile.Phone;
+                userProfile.Gender = (int)model.Gender;
+                userProfile.Prename = model.FirstName;
+                userProfile.Surname = model.LastName;
+                userProfile.Language = (int)model.Language;
+                userProfile.PreferredLanguage = (int)model.Preferred_Language;
+                userProfile.Phone = model.Phone;
 
                 //company
-                userProfile.IndustryFamilyType = (int)model.UserProfile.CompanyProfile.IndustryFamilyType;
-                userProfile.IndustryType = model.UserProfile.CompanyProfile.IndustryType;
-                userProfile.CompanyName = model.UserProfile.CompanyProfile.CompanyName;
-                userProfile.Street = model.UserProfile.CompanyProfile.Street;
-                userProfile.StreetNumber = model.UserProfile.CompanyProfile.StreetNumber;
-                userProfile.ZipCode = model.UserProfile.CompanyProfile.ZipCode;
-                userProfile.City = model.UserProfile.CompanyProfile.City;
-                userProfile.Country = model.UserProfile.CompanyProfile.Country;
+                userProfile.IndustryFamilyType = (int)model.Industry_Family;
+                userProfile.IndustryType = model.Industry_Type;
+                userProfile.CompanyName = model.Company;
+                userProfile.Street = model.Street;
+                userProfile.StreetNumber = model.Street;
+                userProfile.ZipCode = model.Zip;
+                userProfile.City = model.City;
+                userProfile.Country = model.Country;
 
-                userProfile.SecretQuestion = model.UserProfile.SecretQuestion;
-                userProfile.SecretAnswer = model.UserProfile.SecretAnswer.GetHashCode().ToString();
-                userProfile.TermsAccepted = model.UserProfile.TermsAccepted;
+                userProfile.SecretQuestion = model.Question;
+                userProfile.SecretAnswer = model.Answer.GetHashCode().ToString();
+
                 userProfile.ConfirmationHash = Guid.NewGuid().ToString("N");
 
                 _userService.CreateProfile(userProfile);
 
                 if (!confirm) ControllerUtility.SendMail("deviceregsender@gmail.com", "DeviceReg E-Mail Confirmation",
-                     HttpContext.Current.Request.Url.GetLeftPart(UriPartial.Authority) + "/api/account/confirmuser?confirmationhash=" + userProfile.ConfirmationHash);
+
+                     HttpContext.Current.Request.Url.GetLeftPart(UriPartial.Authority) + "/confirmuser?confirmationhash=" + userProfile.ConfirmationHash);
+
             }
             _userService.AddRoleToUser(user.Id, roleName);
             

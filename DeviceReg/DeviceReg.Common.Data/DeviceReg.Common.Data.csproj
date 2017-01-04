@@ -67,6 +67,10 @@
     <Compile Include="Migrations\201612181645177_AddedIEntityToMediumAndTypeOfDevice.Designer.cs">
       <DependentUpon>201612181645177_AddedIEntityToMediumAndTypeOfDevice.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201701041609200_AddedPreferredLanguage.cs" />
+    <Compile Include="Migrations\201701041609200_AddedPreferredLanguage.Designer.cs">
+      <DependentUpon>201701041609200_AddedPreferredLanguage.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Claim.cs" />
     <Compile Include="Models\ComplexTypes\Timestamp.cs" />
@@ -91,6 +95,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201612181645177_AddedIEntityToMediumAndTypeOfDevice.resx">
       <DependentUpon>201612181645177_AddedIEntityToMediumAndTypeOfDevice.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201701041609200_AddedPreferredLanguage.resx">
+      <DependentUpon>201701041609200_AddedPreferredLanguage.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

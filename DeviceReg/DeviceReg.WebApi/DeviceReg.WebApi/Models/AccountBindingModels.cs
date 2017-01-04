@@ -36,7 +36,7 @@ namespace DeviceReg.WebApi.Models
     {
         [Required]
         [Display(Name = "E-Mail")]
-        public string Email { get; set; }
+        public string User { get; set; }
 
         [Required]
         [StringLength(100, ErrorMessage = "\"{0}\" muss mindestens {2} Zeichen lang sein.", MinimumLength = 6)]
@@ -49,7 +49,36 @@ namespace DeviceReg.WebApi.Models
         [Compare("Password", ErrorMessage = "Das Kennwort stimmt nicht mit dem Bestätigungskennwort überein.")]
         public string ConfirmPassword { get; set; }
 
-        public UserProfileRegistrationBindingModel UserProfile { get; set; }
+        public GenderType Gender { get; set; }
+
+        public string FirstName { get; set; }
+
+        public string LastName { get; set; }
+
+        public LanguageType Language { get; set; }
+
+        public string Phone { get; set; }
+
+        public IndustryFamilyType Industry_Family { get; set; }
+
+        public string Industry_Type { get; set; }
+
+        public string Company { get; set; }
+
+        public string Street { get; set; }
+
+        public string Number { get; set; }
+
+        public string Zip { get; set; }
+
+        public string City { get; set; }
+
+        public string Country { get; set; }
+
+        public string Question { get; set; }
+
+        public string Answer { get; set; }
+        public LanguageType Preferred_Language { get; internal set; }
     }
 
     public class RegisterExternalBindingModel
