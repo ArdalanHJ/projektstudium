@@ -49,7 +49,7 @@ namespace DeviceReg.Common.Services
 
         public IEnumerable<Device> GetAllActiveByUserId(string userId)
         {
-           return GetAllByUserId(userId).Where(d => d.Timestamp.Deleted == null);
+            return GetAllByUserId(userId).Where(d => d.Timestamp.Deleted == null);
         }
 
         public IEnumerable<Device> GetAllDeletedByUserId(string userId)
@@ -84,6 +84,19 @@ namespace DeviceReg.Common.Services
             return UnitOfWork.SaveChanges() > 0;
         }
 
+        public IEnumerable<Device> GetAllForRegularMaintenance(DateTime date)
+        {
+            var result = UnitOfWork.Devices.GetAll().Where(dev => dev.RegularMaintenance);
+
+            return result;
+        }
+
+        public IEnumerable<Device> GetAllForRegularCalibration(DateTime date)
+        {
+            var result = UnitOfWork.Devices.GetAll().Where(dev => dev.RegularMaintenance);
+
+            return result;
+        }
 
         private void CheckDevice(Device device)
         {

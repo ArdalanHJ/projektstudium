@@ -107,5 +107,19 @@ namespace DeviceReg.Repositories
             }
 
         }
+        
+        private TextResourceRepository _textResource;
+
+        public TextResourceRepository TextResources
+        {
+            get
+            {
+                if (_textResource == null)
+                    _textResource = new TextResourceRepository(_context.TextResources);
+
+                return _textResource;
+            }
+
+        }
     }
 }
