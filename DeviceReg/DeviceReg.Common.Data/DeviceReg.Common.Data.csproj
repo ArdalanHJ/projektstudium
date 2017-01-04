@@ -71,6 +71,10 @@
     <Compile Include="Migrations\201701041609200_AddedPreferredLanguage.Designer.cs">
       <DependentUpon>201701041609200_AddedPreferredLanguage.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201701042228006_AddedSerialNumberToIndex.cs" />
+    <Compile Include="Migrations\201701042228006_AddedSerialNumberToIndex.Designer.cs">
+      <DependentUpon>201701042228006_AddedSerialNumberToIndex.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Claim.cs" />
     <Compile Include="Models\ComplexTypes\Timestamp.cs" />
@@ -98,6 +102,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201701041609200_AddedPreferredLanguage.resx">
       <DependentUpon>201701041609200_AddedPreferredLanguage.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201701042228006_AddedSerialNumberToIndex.resx">
+      <DependentUpon>201701042228006_AddedSerialNumberToIndex.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

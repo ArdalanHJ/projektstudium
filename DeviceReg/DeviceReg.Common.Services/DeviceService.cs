@@ -93,6 +93,7 @@ namespace DeviceReg.Common.Services
         private void CheckDevice(Device device)
         {
             ErrorHandler.Check(device, ErrorHandler.InvalidDevice);
+            if(UnitOfWork.Devices.GetBySerialNumber(device.Serialnumber) != null) throw new Exception(ErrorHandler.SerialNumberAlreadyExists);
             ErrorHandler.Check(UnitOfWork.Media.GetById(device.MediumId), ErrorHandler.MediumNotFound);
             ErrorHandler.Check(UnitOfWork.Types.GetById(device.TypeOfDeviceId), ErrorHandler.TypeOfDeviceNotFound);
         }

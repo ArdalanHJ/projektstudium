@@ -30,6 +30,9 @@ namespace DeviceReg.Common.Data.Models
         {
             get; set;
         }
+
+        [MaxLength(9)]
+        [Index("SerialNumberIndex", IsUnique = true)]
         public string Serialnumber
         {
             get; set;
