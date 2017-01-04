@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using Newtonsoft.Json;
+using DeviceReg.Common.Data.Models;
 
 namespace DeviceReg.WebApi.Models
 {
@@ -79,6 +80,97 @@ namespace DeviceReg.WebApi.Models
 
         public string Answer { get; set; }
         public LanguageType Preferred_Language { get; internal set; }
+    }
+
+    public class UserUpdateBindingModel
+    {
+        public string Phone { get; set; }
+
+        public IndustryFamilyType Industry_Family { get; set; }
+
+        public string Industry_Type { get; set; }
+
+        public string Company { get; set; }
+
+        public string Street { get; set; }
+
+        public string Number { get; set; }
+
+        public string Zip { get; set; }
+
+        public string City { get; set; }
+
+        public string Country { get; set; }
+
+        public LanguageType Language { get; set; }
+
+        public LanguageType Preferred_Language { get; set; }
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+        public GenderType Gender { get; set; }
+    }
+
+    public class UserDeleteBindingModel
+    {
+        public string Answer { get; set; }
+    }
+
+    public class UserDto
+    {
+        public UserDto(User user)
+        {
+            User = user.UserName;
+            Id = user.Id;
+            Gender = ((GenderType) user.Profile.Gender).ToString();
+            FirstName = user.Profile.Prename;
+            LastName = user.Profile.Surname;
+            Industry_Family = ((IndustryFamilyType) user.Profile.IndustryFamilyType).ToString();
+            Industry_Type = user.Profile.IndustryType;
+            Company = user.Profile.CompanyName;
+            Language = ((LanguageType) user.Profile.Language).ToString();
+            Preferred_Language = ((LanguageType) user.Profile.PreferredLanguage).ToString();
+            Country = user.Profile.Country;
+            City = user.Profile.City;
+            Zip = user.Profile.ZipCode;
+            Street = user.Profile.Street;
+            Number = user.Profile.StreetNumber;
+            Phone = user.Profile.Phone;
+            Question = user.Profile.SecretQuestion;
+        }
+
+        public string User { get; set; }
+
+        public string Id { get; set; }
+
+        public string Gender { get; set; }
+
+        public string FirstName { get; set; }
+
+        public string LastName { get; set; }
+
+        public string Language { get; set; }
+
+        public string Preferred_Language { get; set; }
+
+        public string Phone { get; set; }
+
+        public string Industry_Family { get; set; }
+
+        public string Industry_Type { get; set; }
+
+        public string Company { get; set; }
+
+        public string Street { get; set; }
+
+        public string Number { get; set; }
+
+        public string Zip { get; set; }
+
+        public string City { get; set; }
+
+        public string Country { get; set; }
+
+        public string Question { get; set; }  
     }
 
     public class RegisterExternalBindingModel

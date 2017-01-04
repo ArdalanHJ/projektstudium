@@ -68,5 +68,22 @@ namespace DeviceReg.Services
             UnitOfWork.SaveChanges();
             return true;
         }
+
+        public bool Update(User user)
+        {
+            
+            UnitOfWork.SaveChanges();
+            return true;
+        }
+
+        public void Delete(string userId, string answer)
+        {
+            var user = ErrorHandler.Check(UnitOfWork.Users.GetUserById(userId), ErrorHandler.UserNotFound);
+            var userProfile = ErrorHandler.Check(UnitOfWork.Profiles.GetByUserId(userId), ErrorHandler.ProfileNotFound);
+            var hashedAnswer = answer.GetHashCode().ToString();
+            if(!hashedAnswer.Equals(user.Profile.SecretAnswer)) throw new Exception(ErrorHandler.SecretAnswerMismatch);
+            UnitOfWork.Users.Delete(user);
+            UnitOfWork.SaveChanges();
+        }
     }
 }

@@ -330,6 +330,11 @@ namespace DeviceReg.WebApi.Controllers
             return logins;
         }
 
+        #region CRUD
+
+        
+
+
         /// <summary>
         /// Registers customer
         /// </summary>
@@ -366,6 +371,78 @@ namespace DeviceReg.WebApi.Controllers
         {
             return await RegisterWithRole(model, "support", true);
         }
+
+        /// <summary>
+        /// Reads customer
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        [AllowAnonymous]
+        [Route("user")]
+        [HttpGet]
+        public IHttpActionResult Get()
+        {
+            return ControllerUtility.Guard(() =>
+            {
+                var user = _userService.GetUserById(User.Identity.GetUserId());
+
+                return Ok(new UserDto(user));
+            });
+        }
+
+        /// <summary>
+        /// Updates customer
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        [AllowAnonymous]
+        [Route("user")]
+        [HttpPut]
+        public IHttpActionResult Update(UserUpdateBindingModel model)
+        {
+            if (!ModelState.IsValid) return BadRequest(ModelState);
+            return ControllerUtility.Guard(() =>
+            {
+                var user = _userService.GetUserById(User.Identity.GetUserId());
+                user.Profile.Prename = model.FirstName;
+                user.Profile.Surname = model.LastName;
+                user.Profile.Gender = (int) model.Gender;
+                user.Profile.Phone = model.Phone;
+                user.Profile.IndustryFamilyType = (int) model.Industry_Family;
+                user.Profile.IndustryType = model.Industry_Type;
+                user.Profile.CompanyName = model.Company;
+                user.Profile.Street = model.Street;
+                user.Profile.StreetNumber = model.Number;
+                user.Profile.ZipCode = model.Zip;
+                user.Profile.City = model.City;
+                user.Profile.Country = model.Country;
+                user.Profile.Language = (int) model.Language;
+                user.Profile.PreferredLanguage = (int) model.Preferred_Language;
+                _userService.Update(user);
+                return Ok();
+            });
+        }
+
+        /// <summary>
+        /// Delete customer
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        [AllowAnonymous]
+        [Route("user")]
+        [HttpDelete]
+        public IHttpActionResult Delete(UserDeleteBindingModel model)
+        {
+            if (!ModelState.IsValid) return BadRequest(ModelState);
+            return ControllerUtility.Guard(() =>
+            {
+                var currentUserId = User.Identity.GetUserId();
+                _userService.Delete(currentUserId, model.Answer);
+                return Ok();
+            });
+        }
+
+        #endregion
 
         #region IdentityCustomization
         public async Task<IHttpActionResult> RegisterWithRole(RegisterBindingModel model, string roleName, bool confirm)
@@ -405,7 +482,7 @@ namespace DeviceReg.WebApi.Controllers
                 userProfile.IndustryType = model.Industry_Type;
                 userProfile.CompanyName = model.Company;
                 userProfile.Street = model.Street;
-                userProfile.StreetNumber = model.Street;
+                userProfile.StreetNumber = model.Number;
                 userProfile.ZipCode = model.Zip;
                 userProfile.City = model.City;
                 userProfile.Country = model.Country;
