@@ -21,7 +21,6 @@ namespace DeviceReg.WebApi.Controllers
     /// Controller for customer access to devices
     /// </summary>
     [Authorize(Roles = "customer")]
-    [RoutePrefix("api/user/devices")]
     public class DeviceController : ApiControllerBase
     {
         private DeviceService _deviceService;
@@ -39,7 +38,7 @@ namespace DeviceReg.WebApi.Controllers
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
-        [Route()]
+        [Route("device")]
         public IHttpActionResult Post([FromBody] DeviceModel model)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
@@ -66,7 +65,7 @@ namespace DeviceReg.WebApi.Controllers
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        [Route("{id}")]
+        [Route("device/{id}")]
         public IHttpActionResult Delete(int id)
         {
             try
@@ -89,7 +88,7 @@ namespace DeviceReg.WebApi.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet]
-        [Route("")]
+        [Route("devices")]
         public IHttpActionResult Get()
         {
             var x = base.User.Identity.GetUserId();
@@ -112,7 +111,7 @@ namespace DeviceReg.WebApi.Controllers
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpGet]
-        [Route("{id}")]
+        [Route("device/{id}")]
         public IHttpActionResult Get(int id)
         {
             return ControllerUtility.Guard(() =>
@@ -134,7 +133,7 @@ namespace DeviceReg.WebApi.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpPut]
-        [Route("{id}")]
+        [Route("device/{id}")]
         public IHttpActionResult Update(DeviceModel model, int id)
         {
             return ControllerUtility.Guard(() => {

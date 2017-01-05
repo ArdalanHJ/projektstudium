@@ -89,7 +89,6 @@ namespace DeviceReg.Common.Services
             var device = GetActiveByUserId(v, id);
             return device != null;
         }
-        }
 
         public IEnumerable<Device> GetAllForRegularMaintenance(DateTime date)
         {
@@ -97,7 +96,7 @@ namespace DeviceReg.Common.Services
 
             return result;
         }
-        
+
         public IEnumerable<Device> GetAllForRegularCalibration(DateTime date)
         {
             var result = UnitOfWork.Devices.GetAll().Where(dev => dev.RegularMaintenance);
@@ -108,6 +107,7 @@ namespace DeviceReg.Common.Services
         private void CheckDevice(Device device)
         {
             ErrorHandler.Check(device, ErrorHandler.InvalidDevice);
+            if (UnitOfWork.Devices.GetBySerialNumber(device.Serialnumber) != null) throw new Exception(ErrorHandler.SerialNumberAlreadyExists);
             ErrorHandler.Check(UnitOfWork.Media.GetById(device.MediumId), ErrorHandler.MediumNotFound);
             ErrorHandler.Check(UnitOfWork.Types.GetById(device.TypeOfDeviceId), ErrorHandler.TypeOfDeviceNotFound);
         }

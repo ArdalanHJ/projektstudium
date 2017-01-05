@@ -20,6 +20,7 @@ namespace DeviceReg.Services.Utility
         public const string MediumNotFound = "Medium not found";
         public const string TypeOfDeviceNotFound = "Type of device not found.";
         public const string InvalidProfile = "Invalid user profile.";
+        public const string SerialNumberAlreadyExists = "Serial number already exists";
 
         public static T Check<T>(T obj, string errorMsg)
         {

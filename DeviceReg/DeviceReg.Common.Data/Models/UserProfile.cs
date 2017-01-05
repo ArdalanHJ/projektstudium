@@ -54,7 +54,6 @@ namespace DeviceReg.Common.Data.Models
         public virtual User User { get; set; }
 
         public string ConfirmationHash { get; set; }
-
-
+        public int PreferredLanguage { get; set; }
     }
 }
