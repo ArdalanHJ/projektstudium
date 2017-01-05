@@ -16,12 +16,12 @@ namespace DeviceReg.Repositories
 
         public UserProfile GetUserByConfirmationHash(string confirmationHash)
         {
-            return DbSet.FirstOrDefault(up => up.ConfirmationHash == confirmationHash);
+            return DbSet.FirstOrDefault(up => up.ConfirmationHash.Equals(confirmationHash));
         }
 
         public UserProfile GetByUserId(string userId)
         {
-            return DbSet.FirstOrDefault(up => up.UserId == userId);
+            return DbSet.FirstOrDefault(up => up.UserId.Equals(userId));
         }
     }
 }

@@ -31,8 +31,10 @@ namespace DeviceReg.Repositories
             return DbSet.Where(u => !u.LockoutEnabled);
         }
 
-      
-
+        public void Delete(User user)
+        {
+            DbSet.Remove(user);
+        }
     }
 }
 

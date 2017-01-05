@@ -67,6 +67,22 @@
     <Compile Include="Migrations\201612181645177_AddedIEntityToMediumAndTypeOfDevice.Designer.cs">
       <DependentUpon>201612181645177_AddedIEntityToMediumAndTypeOfDevice.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201701040236342_InitialCreate.cs" />
+    <Compile Include="Migrations\201701040236342_InitialCreate.Designer.cs">
+      <DependentUpon>201701040236342_InitialCreate.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201701041609200_AddedPreferredLanguage.cs" />
+    <Compile Include="Migrations\201701041609200_AddedPreferredLanguage.Designer.cs">
+      <DependentUpon>201701041609200_AddedPreferredLanguage.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201701042228006_AddedSerialNumberToIndex.cs" />
+    <Compile Include="Migrations\201701042228006_AddedSerialNumberToIndex.Designer.cs">
+      <DependentUpon>201701042228006_AddedSerialNumberToIndex.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201701051505503_AddedTextResources.cs" />
+    <Compile Include="Migrations\201701051505503_AddedTextResources.Designer.cs">
+      <DependentUpon>201701051505503_AddedTextResources.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Claim.cs" />
     <Compile Include="Models\ComplexTypes\Timestamp.cs" />
@@ -75,6 +91,7 @@
     <Compile Include="Models\Medium.cs" />
     <Compile Include="Models\Role.cs" />
     <Compile Include="Models\Tag.cs" />
+    <Compile Include="Models\TextResource.cs" />
     <Compile Include="Models\UserLogin.cs" />
     <Compile Include="Models\UserProfile.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -91,6 +108,18 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201612181645177_AddedIEntityToMediumAndTypeOfDevice.resx">
       <DependentUpon>201612181645177_AddedIEntityToMediumAndTypeOfDevice.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201701040236342_InitialCreate.resx">
+      <DependentUpon>201701040236342_InitialCreate.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201701041609200_AddedPreferredLanguage.resx">
+      <DependentUpon>201701041609200_AddedPreferredLanguage.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201701042228006_AddedSerialNumberToIndex.resx">
+      <DependentUpon>201701042228006_AddedSerialNumberToIndex.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201701051505503_AddedTextResources.resx">
+      <DependentUpon>201701051505503_AddedTextResources.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

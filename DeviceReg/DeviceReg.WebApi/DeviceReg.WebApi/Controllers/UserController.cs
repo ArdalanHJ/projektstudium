@@ -21,18 +21,18 @@ using DeviceReg.Common.Data.Models;
 using DeviceReg.Services;
 using System.Net;
 using System.Web.Http.Controllers;
+using DeviceReg.WebApi.Utility;
 
 namespace DeviceReg.WebApi.Controllers
 {
     [Authorize]
-    [RoutePrefix("api/Account")]
-    public class AccountController : ApiControllerBase
+    public class UserController : ApiControllerBase
     {
         private const string LocalLoginProvider = "Local";
         private ApplicationUserManager _userManager;
         private UserService _userService;
 
-        public AccountController()
+        public UserController()
         {
         }
 
@@ -42,7 +42,7 @@ namespace DeviceReg.WebApi.Controllers
             _userService = new UserService(UnitOfWork);
         }
 
-        public AccountController(ApplicationUserManager userManager,
+        public UserController(ApplicationUserManager userManager,
             ISecureDataFormat<AuthenticationTicket> accessTokenFormat)
         {
             UserManager = userManager;
@@ -330,13 +330,19 @@ namespace DeviceReg.WebApi.Controllers
             return logins;
         }
 
+        #region CRUD
+
+        
+
+
         /// <summary>
         /// Registers customer
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
         [AllowAnonymous]
-        [Route("Register")]
+        [Route("user")]
+        [HttpPost]
         public async Task<IHttpActionResult> RegisterCustomer(RegisterBindingModel model)
         {
            return await RegisterWithRole(model, "customer", false);
@@ -366,6 +372,78 @@ namespace DeviceReg.WebApi.Controllers
             return await RegisterWithRole(model, "support", true);
         }
 
+        /// <summary>
+        /// Reads customer
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        [AllowAnonymous]
+        [Route("user")]
+        [HttpGet]
+        public IHttpActionResult Get()
+        {
+            return ControllerUtility.Guard(() =>
+            {
+                var user = _userService.GetUserById(User.Identity.GetUserId());
+
+                return Ok(new UserDto(user));
+            });
+        }
+
+        /// <summary>
+        /// Updates customer
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        [AllowAnonymous]
+        [Route("user")]
+        [HttpPut]
+        public IHttpActionResult Update(UserUpdateBindingModel model)
+        {
+            if (!ModelState.IsValid) return BadRequest(ModelState);
+            return ControllerUtility.Guard(() =>
+            {
+                var user = _userService.GetUserById(User.Identity.GetUserId());
+                user.Profile.Prename = model.FirstName;
+                user.Profile.Surname = model.LastName;
+                user.Profile.Gender = (int) model.Gender;
+                user.Profile.Phone = model.Phone;
+                user.Profile.IndustryFamilyType = (int) model.Industry_Family;
+                user.Profile.IndustryType = model.Industry_Type;
+                user.Profile.CompanyName = model.Company;
+                user.Profile.Street = model.Street;
+                user.Profile.StreetNumber = model.Number;
+                user.Profile.ZipCode = model.Zip;
+                user.Profile.City = model.City;
+                user.Profile.Country = model.Country;
+                user.Profile.Language = (int) model.Language;
+                user.Profile.PreferredLanguage = (int) model.Preferred_Language;
+                _userService.Update(user);
+                return Ok();
+            });
+        }
+
+        /// <summary>
+        /// Delete customer
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        [AllowAnonymous]
+        [Route("user")]
+        [HttpDelete]
+        public IHttpActionResult Delete(UserDeleteBindingModel model)
+        {
+            if (!ModelState.IsValid) return BadRequest(ModelState);
+            return ControllerUtility.Guard(() =>
+            {
+                var currentUserId = User.Identity.GetUserId();
+                _userService.Delete(currentUserId, model.Answer);
+                return Ok();
+            });
+        }
+
+        #endregion
+
         #region IdentityCustomization
         public async Task<IHttpActionResult> RegisterWithRole(RegisterBindingModel model, string roleName, bool confirm)
         {
@@ -374,9 +452,11 @@ namespace DeviceReg.WebApi.Controllers
                 return BadRequest(ModelState);
             }
 
-            var user = new ApplicationUser() { UserName = model.Email, Email = model.Email };
+            var user = new ApplicationUser() { UserName = model.User, Email = model.User };
 
             user.EmailConfirmed = confirm;
+
+           
 
             IdentityResult result = await UserManager.CreateAsync(user, model.Password);
 
@@ -385,90 +465,68 @@ namespace DeviceReg.WebApi.Controllers
                 return GetErrorResult(result);
             }
 
-            if (model.UserProfile != null)
+            if (model != null)
             {
                 var userProfile = new UserProfile();
 
                 userProfile.UserId = user.Id;
-                userProfile.Gender = (int)model.UserProfile.Gender;
-                userProfile.Prename = model.UserProfile.Prename;
-                userProfile.Surname = model.UserProfile.Surname;
-                userProfile.Language = (int)model.UserProfile.Language;
-                userProfile.Phone = model.UserProfile.Phone;
+                userProfile.Gender = (int)model.Gender;
+                userProfile.Prename = model.FirstName;
+                userProfile.Surname = model.LastName;
+                userProfile.Language = (int)model.Language;
+                userProfile.PreferredLanguage = (int)model.Preferred_Language;
+                userProfile.Phone = model.Phone;
 
                 //company
-                userProfile.IndustryFamilyType = (int)model.UserProfile.CompanyProfile.IndustryFamilyType;
-                userProfile.IndustryType = model.UserProfile.CompanyProfile.IndustryType;
-                userProfile.CompanyName = model.UserProfile.CompanyProfile.CompanyName;
-                userProfile.Street = model.UserProfile.CompanyProfile.Street;
-                userProfile.StreetNumber = model.UserProfile.CompanyProfile.StreetNumber;
-                userProfile.ZipCode = model.UserProfile.CompanyProfile.ZipCode;
-                userProfile.City = model.UserProfile.CompanyProfile.City;
-                userProfile.Country = model.UserProfile.CompanyProfile.Country;
+                userProfile.IndustryFamilyType = (int)model.Industry_Family;
+                userProfile.IndustryType = model.Industry_Type;
+                userProfile.CompanyName = model.Company;
+                userProfile.Street = model.Street;
+                userProfile.StreetNumber = model.Number;
+                userProfile.ZipCode = model.Zip;
+                userProfile.City = model.City;
+                userProfile.Country = model.Country;
 
-                userProfile.SecretQuestion = model.UserProfile.SecretQuestion;
-                userProfile.SecretAnswer = model.UserProfile.SecretAnswer.GetHashCode().ToString();
-                userProfile.TermsAccepted = model.UserProfile.TermsAccepted;
-                userProfile.ConfirmationHash = UserManager.PasswordHasher.HashPassword(Guid.NewGuid().ToString("D"));
+                userProfile.SecretQuestion = model.Question;
+                userProfile.SecretAnswer = model.Answer.GetHashCode().ToString();
+
+                userProfile.ConfirmationHash = Guid.NewGuid().ToString("N");
 
                 _userService.CreateProfile(userProfile);
+
+                if (!confirm) ControllerUtility.SendMail("deviceregsender@gmail.com", "DeviceReg E-Mail Confirmation",
+
+                     HttpContext.Current.Request.Url.GetLeftPart(UriPartial.Authority) + "/confirmuser?confirmationhash=" + userProfile.ConfirmationHash);
+
             }
             _userService.AddRoleToUser(user.Id, roleName);
-
+            
             return Ok();
         }
         [AllowAnonymous]
-        [HttpPost]
+        [HttpGet]
         [Route("ConfirmUser")]
-        public HttpResponseMessage ConfirmUserEmail(EmailConfirmationBindingModel model)
+        public IHttpActionResult ConfirmUserEmail(string confirmationHash)
         {
-            var returncode = HttpStatusCode.BadRequest;
-            try
+            return ControllerUtility.Guard(() =>
             {
-                var success = _userService.ConfirmUser(model.ConfirmationHash);
-                if (success)
-                {
-                    returncode = HttpStatusCode.Accepted;
-                }
-            }
-            catch (Exception ex)
-            {
-
-                var resp = new HttpResponseMessage(returncode)
-                {
-                    ReasonPhrase = ex.Message
-                };
-                 throw new HttpResponseException(resp);
-            }
-            return new HttpResponseMessage(returncode);
+                _userService.ConfirmUser(confirmationHash);
+                return Ok();
+            });
         }
 
         [AllowAnonymous]
         [HttpPost]
         [Route("ResetPassword")]
-        public HttpResponseMessage ResetPassword(ResetPasswordBindingModel model)
+        public IHttpActionResult ResetPassword(ResetPasswordBindingModel model)
         {
-            var returncode = HttpStatusCode.BadRequest;
-            try
+            return ControllerUtility.Guard(() =>
             {
                 var secretAnswerHash = model.SecretAnswer.GetHashCode().ToString();
-                var newConfirmationHash = UserManager.PasswordHasher.HashPassword(Guid.NewGuid().ToString("D"));
-                var success = _userService.ResetPassword(model.UserEmail, secretAnswerHash, newConfirmationHash);
-                if (success)
-                {
-                    returncode = HttpStatusCode.Accepted;
-                }
-            }
-            catch (Exception ex)
-            {
-
-                var resp = new HttpResponseMessage(returncode)
-                {
-                    ReasonPhrase = ex.Message
-                };
-                throw new HttpResponseException(resp);
-            }
-            return new HttpResponseMessage(returncode);
+                var newConfirmationHash = Guid.NewGuid().ToString("N");
+                _userService.ResetPassword(model.UserEmail, secretAnswerHash, newConfirmationHash);
+                return Ok();
+            });
         }
 
         #endregion

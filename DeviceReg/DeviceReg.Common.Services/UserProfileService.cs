@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using DeviceReg.Repositories;
 using DeviceReg.Common.Data.Models;
+using DeviceReg.Services.Utility;
 
 namespace DeviceReg.Services
 {
@@ -17,18 +18,12 @@ namespace DeviceReg.Services
 
         public UserProfile GetByUserId(string userId)
         {
-            var userProfile = UnitOfWork.Profiles.GetByUserId(userId);
-            if(userProfile == null)
-            {
-                throw new Exception("Profile not found.");
-            }
-            return userProfile;
+           return ErrorHandler.Check(UnitOfWork.Profiles.GetByUserId(userId), ErrorHandler.ProfileNotFound);
         }
 
         public bool Update(UserProfile userProfile)
         {
-            if (userProfile == null) throw new Exception("Invalid user profile.");
-            UnitOfWork.Profiles.Update(userProfile);
+            UnitOfWork.Profiles.Update(ErrorHandler.Check(userProfile, ErrorHandler.InvalidProfile));
             return UnitOfWork.SaveChanges() > 0;
         }
 

@@ -2,6 +2,7 @@
 using DeviceReg.Repositories;
 using DeviceReg.Services;
 using DeviceReg.Services.Abstract;
+using DeviceReg.Services.Utility;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,13 +21,9 @@ namespace DeviceReg.Common.Services
 
         public bool Add(Device device)
         {
-
-            if (IsValidDevice(device))
-            {
-                UnitOfWork.Devices.Add(device);
-                UnitOfWork.SaveChanges();
-            }
-
+            CheckDevice(device);
+            UnitOfWork.Devices.Add(device);
+            UnitOfWork.SaveChanges();
             return true;
         }
 
@@ -45,15 +42,14 @@ namespace DeviceReg.Common.Services
 
         public IEnumerable<Device> GetAllByUserId(string userId)
         {
-            IsValidUser(userId);
-            
+            ErrorHandler.Check(UnitOfWork.Users.GetUserById(userId), ErrorHandler.UserNotFound);
             var devices = UnitOfWork.Devices.GetAllByUserId(userId);
             return devices;
         }
 
         public IEnumerable<Device> GetAllActiveByUserId(string userId)
         {
-           return GetAllByUserId(userId).Where(d => d.Timestamp.Deleted == null);
+            return GetAllByUserId(userId).Where(d => d.Timestamp.Deleted == null);
         }
 
         public IEnumerable<Device> GetAllDeletedByUserId(string userId)
@@ -63,74 +59,62 @@ namespace DeviceReg.Common.Services
 
         public Device GetById(int deviceId)
         {
-            var device = UnitOfWork.Devices.GetById(deviceId);
-            if(device == null)
-            {
-                throw new Exception("Device not found.");
-            }
-
+            var device = ErrorHandler.Check(UnitOfWork.Devices.GetById(deviceId), ErrorHandler.DeviceNotFound);
             return device;
         }
 
         public bool Update(Device device)
         {
-            if (IsValidDevice(device))
-            {
-                UnitOfWork.Devices.Update(device);
-                UnitOfWork.SaveChanges();
-            }
-
+            CheckDevice(device);
+            UnitOfWork.Devices.Update(device);
+            UnitOfWork.SaveChanges();
             return true;
         }
 
         public bool DeleteAllByUserId(string userId)
         {
-                IsValidUser(userId);
+            ErrorHandler.Check(UnitOfWork.Users.GetUserById(userId), ErrorHandler.UserNotFound);
+            var devices = UnitOfWork.Devices.GetAllByUserId(userId);
 
-                var devices = UnitOfWork.Devices.GetAllByUserId(userId);
+            foreach (Device device in devices)
+            {
+                UnitOfWork.Devices.Delete(device);
+            }
 
-                foreach (Device device in devices)
-                {
-                    UnitOfWork.Devices.Delete(device);
-                }
-
-                return UnitOfWork.SaveChanges() > 0;
+            return UnitOfWork.SaveChanges() > 0;
         }
 
-        private bool IsValidUser(string userId)
+        public bool DeviceBelongsToUser(int id, string v)
         {
-            var user = UnitOfWork.Users.GetUserById(userId);
-
-            if (user == null)
-            {
-                throw new Exception("User not found.");
-            }
-
-            return true;
+            var device = GetActiveByUserId(v, id);
+            return device != null;
         }
 
-        private bool IsValidDevice(Device device)
+        public IEnumerable<Device> GetAllForRegularMaintenance(DateTime date)
         {
-            if (device == null)
-            {
-                throw new Exception("Invalid device");
-            }
+            var result = UnitOfWork.Devices.GetAll().Where(dev => dev.RegularMaintenance);
 
-            var medium = UnitOfWork.Media.GetById(device.MediumId);
+            return result;
+        }
 
-            if (medium == null)
-            {
-                throw new Exception("Medium not found");
-            }
+        public IEnumerable<Device> GetAllForRegularCalibration(DateTime date)
+        {
+            var result = UnitOfWork.Devices.GetAll().Where(dev => dev.RegularMaintenance);
 
-            var typeOfDevice = UnitOfWork.Types.GetById(device.TypeOfDeviceId);
+            return result;
+        }
 
-            if (typeOfDevice == null)
-            {
-                throw new Exception("Type of device not found");
-            }
+        private void CheckDevice(Device device)
+        {
+            ErrorHandler.Check(device, ErrorHandler.InvalidDevice);
+            if (UnitOfWork.Devices.GetBySerialNumber(device.Serialnumber) != null) throw new Exception(ErrorHandler.SerialNumberAlreadyExists);
+            ErrorHandler.Check(UnitOfWork.Media.GetById(device.MediumId), ErrorHandler.MediumNotFound);
+            ErrorHandler.Check(UnitOfWork.Types.GetById(device.TypeOfDeviceId), ErrorHandler.TypeOfDeviceNotFound);
+        }
 
-            return true;
+        public Device GetActiveByUserId(string userId, int id)
+        {
+            return GetAllActiveByUserId(userId).Where(x => x.Id.Equals(id)).First();
         }
     }
 }

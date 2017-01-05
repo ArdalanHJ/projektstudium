@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using DeviceReg.Repositories;
 using DeviceReg.Common.Data.Models;
+using DeviceReg.Services.Utility;
 
 namespace DeviceReg.Services
 {
@@ -21,9 +22,8 @@ namespace DeviceReg.Services
 
         public User GetUserById(string id)
         {
-            var user = UnitOfWork.Users.GetUserById(id);
-            if (user == null) throw new Exception("User not found.");
-            return user;
+           var user = ErrorHandler.Check(UnitOfWork.Users.GetUserById(id), ErrorHandler.UserNotFound);
+           return user;
         }
 
 
@@ -41,72 +41,49 @@ namespace DeviceReg.Services
 
         public bool ConfirmUser(string confirmationHash)
         {
-           var profile = UnitOfWork.Profiles.GetUserByConfirmationHash(confirmationHash);
-            if(profile != null)
-            {
-                var user = UnitOfWork.Users.GetUserById(profile.UserId);
-                if(user != null)
-                {
-                    user.EmailConfirmed = true;
-                    profile.ConfirmationHash = null;
-                    UnitOfWork.SaveChanges();
-                    return true;
-                }
-                throw new Exception("User not found.");
-            }
-            throw new Exception("Invalid confirmation hash");
+            var profile = ErrorHandler.Check(UnitOfWork.Profiles.GetUserByConfirmationHash(confirmationHash), ErrorHandler.InvalidConfirmationHash);
+            var user = ErrorHandler.Check(UnitOfWork.Users.GetUserById(profile.UserId), ErrorHandler.UserNotFound);
+            user.EmailConfirmed = true;
+            profile.ConfirmationHash = null;
+            UnitOfWork.SaveChanges();
+            return true;
         }
 
         public bool ResetPassword(string userEmail, string secretAnswerHash, string newConfirmationHash)
         {
-            var user = UnitOfWork.Users.GetUserByEmail(userEmail);
-
-            if(user == null)
-            {
-                throw new Exception("Invalid e-mail.");
-            }
-
-            if (user.LockoutEnabled)
-            {
-                throw new Exception("User is locked out.");
-            }
-
-            var profile = UnitOfWork.Profiles.GetByUserId(user.Id);
-
-            if(profile == null)
-            {
-                throw new Exception("User profile missing.");
-            }
-
-            if (secretAnswerHash != profile.SecretAnswer)
-            {
-                throw new Exception("Secret answer mismatch.");
-            }
-
+            var user = ErrorHandler.Check(UnitOfWork.Users.GetUserByEmail(userEmail), ErrorHandler.InvalidEmail);
+            if (user.LockoutEnabled)  throw new Exception(ErrorHandler.UserLockedOut);
+            var profile = ErrorHandler.Check(UnitOfWork.Profiles.GetByUserId(user.Id), ErrorHandler.ProfileNotFound);
+            if (secretAnswerHash != profile.SecretAnswer) throw new Exception(ErrorHandler.SecretAnswerMismatch);
             profile.ConfirmationHash = newConfirmationHash;
-
             UnitOfWork.SaveChanges();
-
             return true;
         }
 
         public bool AddRoleToUser(string userId, string roleName)
         {
-            var user = UnitOfWork.Users.GetUserById(userId);
-            if (user == null)
-            {
-                throw new Exception("User not found.");
-            }
-            var role = UnitOfWork.Roles.GetRoleByName(roleName);
-
-            if(role == null)
-            {
-                throw new Exception("Role not found.");
-            }
-
+            var user = ErrorHandler.Check(UnitOfWork.Users.GetUserById(userId), ErrorHandler.UserNotFound);
+            var role = ErrorHandler.Check(UnitOfWork.Roles.GetRoleByName(roleName), ErrorHandler.RoleNotFound);
             user.Roles.Add(role);
             UnitOfWork.SaveChanges();
             return true;
+        }
+
+        public bool Update(User user)
+        {
+            
+            UnitOfWork.SaveChanges();
+            return true;
+        }
+
+        public void Delete(string userId, string answer)
+        {
+            var user = ErrorHandler.Check(UnitOfWork.Users.GetUserById(userId), ErrorHandler.UserNotFound);
+            var userProfile = ErrorHandler.Check(UnitOfWork.Profiles.GetByUserId(userId), ErrorHandler.ProfileNotFound);
+            var hashedAnswer = answer.GetHashCode().ToString();
+            if(!hashedAnswer.Equals(user.Profile.SecretAnswer)) throw new Exception(ErrorHandler.SecretAnswerMismatch);
+            UnitOfWork.Users.Delete(user);
+            UnitOfWork.SaveChanges();
         }
     }
 }

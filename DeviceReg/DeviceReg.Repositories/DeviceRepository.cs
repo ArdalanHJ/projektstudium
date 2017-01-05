@@ -21,5 +21,9 @@ namespace DeviceReg.Repositories
            return DbSet.Where(d => d.UserId == userId);
         }
 
+        public Device GetBySerialNumber(string serialnumber)
+        {
+            return DbSet.FirstOrDefault(d => d.Serialnumber.Equals(serialnumber));
+        }
     }
 }
