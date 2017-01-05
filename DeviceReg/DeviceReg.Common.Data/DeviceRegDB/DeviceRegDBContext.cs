@@ -45,6 +45,8 @@ namespace DeviceReg.Common.Data.DeviceRegDB
 
         public virtual DbSet<TypeOfDevice> Types { get; set; }
 
+        public virtual DbSet<TextResource> TextResources { get; set; }
+
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
 

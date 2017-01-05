@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace DeviceReg.Common.Data.DeviceRegDB {
     //public class DeviceRegDBInitializer : DropCreateDatabaseAlways<DeviceRegDBContext> {
-    public class DeviceRegDBInitializer : NullDatabaseInitializer<DeviceRegDBContext> {
+    public class DeviceRegDBInitializer : CreateDatabaseIfNotExists<DeviceRegDBContext> {
 
     //protected override void Seed(DeviceRegDBContext context) {
     //        AddTypesOfDevice(context);
